@@ -59,3 +59,18 @@ const VILLE = {};
   }
   VILLE.bild = bild
 })();
+
+(function () {
+  const { spel } = VILLE
+
+  function utför(arbete) {
+    arbete = arbete()
+    spel.app.ticker.add(() => {
+      let resultat = arbete.next()
+      if (resultat && resultat.done) {
+        return
+      }
+    })
+  }
+  VILLE.utför = utför
+})();
