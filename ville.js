@@ -74,3 +74,37 @@ const VILLE = {};
   }
   VILLE.utför = utför
 })();
+
+(function () {
+  function sekvens(...flera_arbeten) {
+    return function* () {
+      for (let arbete of flera_arbeten) {
+        for (let jobb of arbete()) {
+          yield
+        }
+      }
+    }
+  }
+  VILLE.sekvens = sekvens
+})();
+
+(function() {
+  function upprepa(arbete) {
+    let _antal = Number.MAX_SAFE_INTEGER
+    let _upprepa = function*() {
+      for (let i = 0; i < _antal; i++) {
+        for (let jobb of arbete()) {
+          yield
+        }
+      }
+    }
+    _upprepa.antal = (antal) => {
+      _antal = antal
+      return _upprepa
+    }
+    return _upprepa
+  }
+  VILLE.upprepa = upprepa
+})();
+
+
