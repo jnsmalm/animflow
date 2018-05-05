@@ -130,7 +130,7 @@ const VILLE = {};
 
 (function () {
   const { spel } = VILLE
-  
+
   function vänta(sekunder) {
     return function* () {
       let passerade_sekunder = 0
@@ -141,4 +141,41 @@ const VILLE = {};
     }
   }
   VILLE.vänta = vänta
+})();
+
+(function () {
+  function linjär_interpolation(a, b, t) {
+    return a + (b - a) * t
+  }
+  function interpolera(objekt) {
+    let _tid = 0, _till
+    let _interpolera = function* () {
+      let från = {}
+      for (let namn in _till) {
+        från[namn] = objekt[namn]
+      }
+      let passerad_tid = 0
+      while (passerad_tid < _tid) {
+        passerad_tid += spel.app.ticker.elapsedMS / 1000
+        for (let namn in från) {
+          objekt[namn] = linjär_interpolation(från[namn],
+            _till[namn], Math.min(1, passerad_tid / _tid))
+        }
+        yield
+      }
+      for (let namn in från) {
+        objekt[namn] = _till[namn]
+      }
+    }
+    _interpolera.till = function (till) {
+      _till = till
+      return _interpolera
+    }
+    _interpolera.tid = (tid) => {
+      _tid = tid
+      return _interpolera
+    }
+    return _interpolera
+  }
+  VILLE.interpolera = interpolera
 })();
