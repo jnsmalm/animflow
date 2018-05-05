@@ -1,0 +1,12 @@
+{
+  "bilder": {
+    "mario": {
+      "url": "bilder/mario.png",
+      "skala": 0.1
+    },
+    "yoshi": {
+      "url": "bilder/yoshi.png",
+      "skala": 0.1
+    }
+  }
+}

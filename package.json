@@ -1,0 +1,24 @@
+{
+  "name": "villejs",
+  "version": "1.0.0",
+  "description": "Spelramverk för nybörjare som vill lära sig programmera",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "start": "browser-sync start --server --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jnsmalm/villejs.git"
+  },
+  "author": "Jens Malmborg",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jnsmalm/villejs/issues"
+  },
+  "homepage": "https://github.com/jnsmalm/villejs#readme",
+  "dependencies": {
+    "browser-sync": "^2.24.4"
+  }
+}
