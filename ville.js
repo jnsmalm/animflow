@@ -88,10 +88,10 @@ const VILLE = {};
   VILLE.sekvens = sekvens
 })();
 
-(function() {
+(function () {
   function upprepa(arbete) {
     let _antal = Number.MAX_SAFE_INTEGER
-    let _upprepa = function*() {
+    let _upprepa = function* () {
       for (let i = 0; i < _antal; i++) {
         for (let jobb of arbete()) {
           yield
@@ -106,5 +106,30 @@ const VILLE = {};
   }
   VILLE.upprepa = upprepa
 })();
+
+(function () {
+  function parallellt(...flera_arbeten) {
+    return function* () {
+      let _flera_arbeten = flera_arbeten.slice()
+      for (let i = 0; i < _flera_arbeten.length; i++) {
+        _flera_arbeten[i] = _flera_arbeten[i]()
+      }
+      while (_flera_arbeten.length > 0) {
+        for (let i = _flera_arbeten.length - 1; i >= 0; i--) {
+          let resultat = _flera_arbeten[i].next()
+          if (resultat && resultat.done) {
+            _flera_arbeten.splice(i, 1)
+          }
+        }
+        yield
+      }
+    }
+  }
+  VILLE.parallellt = parallellt
+})();
+
+
+
+
 
 
