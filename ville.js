@@ -128,8 +128,17 @@ const VILLE = {};
   VILLE.parallellt = parallellt
 })();
 
-
-
-
-
-
+(function () {
+  const { spel } = VILLE
+  
+  function vänta(sekunder) {
+    return function* () {
+      let passerade_sekunder = 0
+      while (passerade_sekunder < sekunder) {
+        passerade_sekunder += spel.app.ticker.elapsedMS / 1000
+        yield
+      }
+    }
+  }
+  VILLE.vänta = vänta
+})();
