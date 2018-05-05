@@ -79,9 +79,7 @@ const VILLE = {};
   function sekvens(...flera_arbeten) {
     return function* () {
       for (let arbete of flera_arbeten) {
-        for (let jobb of arbete()) {
-          yield
-        }
+        yield* arbete()
       }
     }
   }
@@ -93,9 +91,7 @@ const VILLE = {};
     let _antal = Number.MAX_SAFE_INTEGER
     let _upprepa = function* () {
       for (let i = 0; i < _antal; i++) {
-        for (let jobb of arbete()) {
-          yield
-        }
+        yield* arbete()
       }
     }
     _upprepa.antal = (antal) => {
@@ -131,11 +127,11 @@ const VILLE = {};
 (function () {
   const { spel } = VILLE
 
-  function vänta(sekunder) {
+  function vänta(tid) {
     return function* () {
-      let passerade_sekunder = 0
-      while (passerade_sekunder < sekunder) {
-        passerade_sekunder += spel.app.ticker.elapsedMS / 1000
+      let passerad_tid = 0
+      while (passerad_tid < tid) {
+        passerad_tid += spel.app.ticker.elapsedMS / 1000
         yield
       }
     }
@@ -178,4 +174,34 @@ const VILLE = {};
     return _interpolera
   }
   VILLE.interpolera = interpolera
+})();
+
+(function () {
+  let { interpolera } = VILLE
+
+  function flytta(objekt) {
+    let _med = {}, _till = {}, _tid
+    let _flytta = function* () {
+      let { x = objekt.x, y = objekt.y } = _till
+      if (_med.x || _med.y) {
+        x = objekt.x + (_med.x || 0)
+        y = objekt.y + (_med.y || 0)
+      }
+      yield* interpolera(objekt).till({ x: x, y: y }).tid(_tid)()
+    }
+    _flytta.med = (med) => {
+      Object.assign(_med, med)
+      return _flytta
+    }
+    _flytta.till = (till) => {
+      Object.assign(_till, till)
+      return _flytta
+    }
+    _flytta.tid = (tid) => {
+      _tid = tid
+      return _flytta
+    }
+    return _flytta
+  }
+  VILLE.flytta = flytta
 })();
