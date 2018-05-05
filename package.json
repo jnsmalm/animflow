@@ -2,9 +2,6 @@
   "name": "villejs",
   "version": "1.0.0",
   "description": "Spelramverk för nybörjare som vill lära sig programmera",
-  "directories": {
-    "lib": "lib"
-  },
   "scripts": {
     "start": "browser-sync start --server --watch"
   },
