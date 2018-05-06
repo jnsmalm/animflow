@@ -37,7 +37,7 @@ const VILLE = {};
         }
       })
     })
-    this.app = new PIXI.Application({ width: 640, height: 480 })
+    this.app = new PIXI.Application()
     document.body.appendChild(this.app.view)
   }
   VILLE.spel = {
@@ -125,13 +125,11 @@ const VILLE = {};
 })();
 
 (function () {
-  const { spel } = VILLE
-
   function vänta(tid) {
     return function* () {
       let passerad_tid = 0
       while (passerad_tid < tid) {
-        passerad_tid += spel.app.ticker.elapsedMS / 1000
+        passerad_tid += VILLE.spel.app.ticker.elapsedMS / 1000
         yield
       }
     }
@@ -177,8 +175,6 @@ const VILLE = {};
 })();
 
 (function () {
-  const { interpolera } = VILLE
-
   function flytta(objekt) {
     let _med = {}, _till = {}, _tid
     let _flytta = function* () {
@@ -187,7 +183,7 @@ const VILLE = {};
         x = objekt.x + (_med.x || 0)
         y = objekt.y + (_med.y || 0)
       }
-      yield* interpolera(objekt).till({ x: x, y: y }).tid(_tid)()
+      yield* VILLE.interpolera(objekt).till({ x: x, y: y }).tid(_tid)()
     }
     _flytta.med = (med) => {
       Object.assign(_med, med)
@@ -207,9 +203,7 @@ const VILLE = {};
 })();
 
 (function () {
-  const { interpolera } = VILLE
   const grader_till_radianer = (Math.PI * 2) / 360
-
   function rotera(objekt) {
     let _med, _till, _tid
     let _rotera = function* () {
@@ -220,7 +214,7 @@ const VILLE = {};
       if (_till !== undefined) {
         rotation = _till * grader_till_radianer
       }
-      yield* interpolera(objekt).till({ rotation: rotation }).tid(_tid)()
+      yield* VILLE.interpolera(objekt).till({ rotation: rotation }).tid(_tid)()
     }
     _rotera.med = (med) => {
       _till = undefined
@@ -239,4 +233,34 @@ const VILLE = {};
     return _rotera
   }
   VILLE.rotera = rotera
+})();
+
+(function () {
+  function visa(objekt) {
+    let _tid
+    let _visa = function* () {
+      yield* VILLE.interpolera(objekt).till({ alpha: 1 }).tid(_tid)()
+    }
+    _visa.tid = (tid) => {
+      _tid = tid
+      return _visa
+    }
+    return _visa
+  }
+  VILLE.visa = visa
+})();
+
+(function () {
+  function dölj(objekt) {
+    let _tid
+    let _dölj = function* () {
+      yield* VILLE.interpolera(objekt).till({ alpha: 0 }).tid(_tid)()
+    }
+    _dölj.tid = (tid) => {
+      _tid = tid
+      return _dölj
+    }
+    return _dölj
+  }
+  VILLE.dölj = dölj
 })();
