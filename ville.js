@@ -177,7 +177,7 @@ const VILLE = {};
 })();
 
 (function () {
-  let { interpolera } = VILLE
+  const { interpolera } = VILLE
 
   function flytta(objekt) {
     let _med = {}, _till = {}, _tid
@@ -204,4 +204,39 @@ const VILLE = {};
     return _flytta
   }
   VILLE.flytta = flytta
+})();
+
+(function () {
+  const { interpolera } = VILLE
+  const grader_till_radianer = (Math.PI * 2) / 360
+
+  function rotera(objekt) {
+    let _med, _till, _tid
+    let _rotera = function* () {
+      let rotation = objekt.rotation
+      if (_med !== undefined) {
+        rotation = objekt.rotation + _med * grader_till_radianer
+      }
+      if (_till !== undefined) {
+        rotation = _till * grader_till_radianer
+      }
+      yield* interpolera(objekt).till({ rotation: rotation }).tid(_tid)()
+    }
+    _rotera.med = (med) => {
+      _till = undefined
+      _med = med
+      return _rotera
+    }
+    _rotera.till = (till) => {
+      _med = undefined
+      _till = till
+      return _rotera
+    }
+    _rotera.tid = (tid) => {
+      _tid = tid
+      return _rotera
+    }
+    return _rotera
+  }
+  VILLE.rotera = rotera
 })();
