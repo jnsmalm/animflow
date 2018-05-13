@@ -62,96 +62,45 @@ const VILLE = {};
 })();
 
 (function () {
-  let _funktioner = []
-  function utför(instruktion) {
-    _funktioner[_funktioner.length - 1](instruktion)
+  let _hanteringar = []
+
+  function instruktion(instruktion) {
+    _hanteringar[_hanteringar.length - 1](instruktion)
     return instruktion
   }
-  utför.funktion = (funktion, a) => {
-    _funktioner.push(funktion)
-    a()
-    _funktioner.pop()
+  instruktion.hantera = (hantera, registrera_instruktioner) => {
+    _hanteringar.push(hantera)
+    registrera_instruktioner()
+    _hanteringar.pop()
   }
-  utför.harFunktion = () => {
-    return _funktioner.length > 0
+  instruktion.finnsHantering = () => {
+    return _hanteringar.length > 0
   }
-  VILLE.utför = utför
+  VILLE.instruktion = instruktion
 })();
 
 (function () {
-  function sekvens(funktion) {
-    let _arbete, _flera_arbeten = [], _arbeten_att_utföra
-    let _upprepa_antal = 0
+  function sekvens(registrera_instruktioner) {
+    let _instruktion, _flera_instruktioner = []
 
     let _sekvens = function* () {
-      for (let arbete of _flera_arbeten) {
-        yield* arbete()
+      for (let instruktion of _flera_instruktioner) {
+        yield* instruktion()
       }
     }
-    _sekvens.upprepa = (antal) => {
-      _upprepa_antal = antal
-      if (antal === undefined) {
-        _upprepa_antal = Number.MAX_SAFE_INTEGER
-      }
-      return _sekvens
+    if (VILLE.instruktion.finnsHantering()) {
+      VILLE.instruktion(_sekvens)
+    } else {
+      VILLE.spel.app.ticker.add(() => {
+        if (!_instruktion) {
+          _instruktion = _sekvens()
+        }
+        _instruktion.next()
+      })
     }
-    _sekvens.avsluta = () => {
-      _upprepa_antal = 0
-      return _sekvens
-    }
-
-    let ja = false
-
-    if (VILLE.utför.harFunktion()) {
-      ja = true
-      VILLE.utför(_sekvens)
-    }
-
-    VILLE.utför.funktion((instruktion) => {
-      _flera_arbeten.push(instruktion)
-    }, funktion)
-
-    if (ja) {
-      return _sekvens
-    }
-
-    // sekvens.utför = (arbete) => {
-    //   _flera_arbeten.push(arbete)
-    // }
-    // funktion()
-    // sekvens.utför = undefined
-
-
-
-
-
-    VILLE.spel.app.ticker.add(() => {
-      if (!_arbete) {
-        _arbete = _sekvens()
-      }
-      let resultat = _arbete.next()
-      if (resultat && resultat.done) {
-        //
-      }
-      // if (!_arbete) {
-      //   if (!_arbeten_att_utföra || _arbeten_att_utföra.length === 0) {
-      //     if (_upprepa_antal < 0) {
-      //       return
-      //     }
-      //     _arbeten_att_utföra = _flera_arbeten.slice()
-      //   }
-      //   _arbete = _arbeten_att_utföra.shift()
-      //   if (!_arbete) {
-      //     return
-      //   }
-      //   _arbete = _arbete()
-      // }
-      // let resultat = _arbete.next()
-      // if (resultat && resultat.done) {
-      //   _upprepa_antal--
-      //   _arbete = undefined
-      // }
-    })
+    VILLE.instruktion.hantera((instruktion) => {
+      _flera_instruktioner.push(instruktion)
+    }, registrera_instruktioner)
 
     return _sekvens
   }
@@ -159,46 +108,8 @@ const VILLE = {};
 })();
 
 (function () {
-  function upprepa(kommando) {
-    let _antal
-
-    // for (let arbete of flera_arbeten) {
-    //   VILLE.spel.ångra(arbete)
-    // }
-    let _upprepa = function* () {
-      if (_antal) {
-        for (let i = 0; i < _antal; i++) {
-          for (let arbete of flera_arbeten) {
-            yield* arbete()
-          }
-        }
-      } else {
-        while (true) {
-          for (let arbete of flera_arbeten) {
-            yield* arbete()
-          }
-        }
-      }
-    }
-    _upprepa.antal = (antal) => {
-      _antal = antal
-      return _upprepa
-    }
-    VILLE.spel.utför(_upprepa)
-    return _upprepa
-  }
-  VILLE.upprepa = upprepa
-})();
-
-(function () {
-  function parallellt(kommando) {
+  function parallellt(registrera_instruktioner) {
     let _flera_instruktioner = []
-
-    VILLE.utför.funktion((instruktion) => {
-      _flera_instruktioner.push(instruktion)
-    }, kommando)
-
-    _flera_instruktioner.reverse()
 
     let _parallellt = function* () {
       let _att_göra = _flera_instruktioner.slice()
@@ -215,33 +126,14 @@ const VILLE = {};
         yield
       }
     }
-    return VILLE.utför(_parallellt)
+    VILLE.instruktion.hantera((instruktion) => {
+      _flera_instruktioner.splice(0, 0, instruktion)
+    }, registrera_instruktioner)
+
+    return VILLE.instruktion(_parallellt)
   }
   VILLE.parallellt = parallellt
 })();
-
-// (function () {
-//   function parallellt(...flera_arbeten) {
-//     let _parallellt = function* () {
-//       let _flera_arbeten = flera_arbeten.slice()
-//       for (let i = 0; i < _flera_arbeten.length; i++) {
-//         _flera_arbeten[i] = _flera_arbeten[i]()
-//       }
-//       while (_flera_arbeten.length > 0) {
-//         for (let i = _flera_arbeten.length - 1; i >= 0; i--) {
-//           let resultat = _flera_arbeten[i].next()
-//           if (resultat && resultat.done) {
-//             _flera_arbeten.splice(i, 1)
-//           }
-//         }
-//         yield
-//       }
-//     }
-//     VILLE.spel.utför(_parallellt)
-//     return _parallellt
-//   }
-//   VILLE.parallellt = parallellt
-// })();
 
 (function () {
   function vänta(tid) {
@@ -252,8 +144,7 @@ const VILLE = {};
         yield
       }
     }
-    VILLE.utför(_vänta)
-    return _vänta
+    return VILLE.instruktion(_vänta)
   }
   VILLE.vänta = vänta
 })();
@@ -292,7 +183,6 @@ const VILLE = {};
       return _interpolera
     }
     return _interpolera
-    //return VILLE.utför(_interpolera)
   }
   VILLE.interpolera = interpolera
 })();
@@ -301,19 +191,15 @@ const VILLE = {};
   function flytta(objekt) {
     let _med = {}, _till = {}, _tid
 
-    let _interpolera =
-      VILLE.interpolera(objekt)
-
     let _flytta = function* () {
       let { x = objekt.x, y = objekt.y } = _till
       if (_med.x || _med.y) {
         x = objekt.x + (_med.x || 0)
         y = objekt.y + (_med.y || 0)
       }
-      _interpolera.till({ x: x, y: y }).tid(_tid)
-      // let interpolera =
-      //   VILLE.interpolera(objekt).till({ x: x, y: y }).tid(_tid)
-      // yield* interpolera()
+      let interpolera =
+        VILLE.interpolera(objekt).till({ x: x, y: y }).tid(_tid)
+      yield* interpolera()
     }
     _flytta.med = (med) => {
       Object.assign(_med, med)
@@ -327,10 +213,7 @@ const VILLE = {};
       _tid = tid
       return _flytta
     }
-    //VILLE.spel.utför(_flytta)
-    VILLE.utför(_flytta)
-    VILLE.utför(_interpolera)
-    return _flytta
+    return VILLE.instruktion(_flytta)
   }
   VILLE.flytta = flytta
 })();
@@ -367,7 +250,7 @@ const VILLE = {};
       _tid = tid
       return _rotera
     }
-    return VILLE.utför(_rotera)
+    return VILLE.instruktion(_rotera)
   }
   VILLE.rotera = rotera
 })();
@@ -382,7 +265,7 @@ const VILLE = {};
       _tid = tid
       return _visa
     }
-    return VILLE.utför(_visa)
+    return VILLE.instruktion(_visa)
   }
   VILLE.visa = visa
 })();
@@ -397,7 +280,7 @@ const VILLE = {};
       _tid = tid
       return _dölj
     }
-    return VILLE.utför(_dölj)
+    return VILLE.instruktion(_dölj)
   }
   VILLE.dölj = dölj
 })();
