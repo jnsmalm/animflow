@@ -62,6 +62,16 @@ const VILLE = {};
 })();
 
 (function () {
+  function ta_bort(objekt) {
+    let _ta_bort = function* () {
+      objekt.parent.removeChild(objekt)
+    }
+    VILLE.instruktion(_ta_bort)
+  }
+  VILLE.ta_bort = ta_bort
+})();
+
+(function () {
   let _hanteringar = []
 
   function instruktion(instruktion) {
@@ -81,13 +91,21 @@ const VILLE = {};
 
 (function () {
   function sekvens(registrera_instruktioner) {
-    let _instruktion, _flera_instruktioner = []
+    let _instruktion, _flera_instruktioner = [], _upprepa = 1
 
     let _sekvens = function* () {
-      for (let instruktion of _flera_instruktioner) {
-        yield* instruktion()
+      for (let i = 0; i < _upprepa; i++) {
+        for (let instruktion of _flera_instruktioner) {
+          yield* instruktion()
+        }
+        yield
       }
     }
+    _sekvens.upprepa = (upprepa) => {
+      _upprepa = upprepa === undefined ? Number.MAX_SAFE_INTEGER : upprepa
+      return _sekvens
+    }
+
     if (VILLE.instruktion.finnsHantering()) {
       VILLE.instruktion(_sekvens)
     } else {
@@ -294,7 +312,7 @@ const VILLE = {};
       return _knapp
     }
 
-    _knapp.ner = (funktion) => {
+    _knapp.ner = (registrera_instruktioner) => {
       let _sekvens
 
       document.addEventListener("keydown", (evt) => {
@@ -302,57 +320,16 @@ const VILLE = {};
           if (_sekvens) {
             return
           }
-          _sekvens = VILLE.sekvens(funktion)
-          _sekvens.upprepa()
+          _sekvens = VILLE.sekvens(registrera_instruktioner)
+          if (_upprepa) {
+            _sekvens.upprepa()
+          }
         }
       })
       document.addEventListener("keyup", (evt) => {
         if (evt.key.toLowerCase() === knapp.toLowerCase()) {
           _sekvens.upprepa(0)
           _sekvens = undefined
-        }
-      })
-    }
-
-    _knapp.nertryckt = (...flera_arbeten) => {
-      let _nertryckt = false
-
-      for (let arbete of flera_arbeten) {
-        VILLE.spel.ångra(arbete)
-      }
-      let _skapa_arbete = () => {
-        let _arbete, _flera_arbeten = flera_arbeten.slice()
-        let _arbeta = () => {
-          if (!_arbete) {
-            if (_flera_arbeten.length === 0) {
-              if (!_nertryckt || !_upprepa) {
-                VILLE.spel.app.ticker.remove(_arbeta, _knapp)
-                return
-              }
-              _flera_arbeten = flera_arbeten.slice()
-            }
-            _arbete = _flera_arbeten.splice(0, 1)[0]
-            _arbete = _arbete()
-          }
-          let resultat = _arbete.next()
-          if (resultat && resultat.done) {
-            _arbete = undefined
-          }
-        }
-        return _arbeta
-      }
-      document.addEventListener("keydown", (evt) => {
-        if (evt.key.toLowerCase() === knapp.toLowerCase()) {
-          if (_nertryckt) {
-            return
-          }
-          VILLE.spel.app.ticker.add(_skapa_arbete(), _knapp)
-          _nertryckt = true
-        }
-      })
-      document.addEventListener("keyup", (evt) => {
-        if (evt.key.toLowerCase() === knapp.toLowerCase()) {
-          _nertryckt = false
         }
       })
       return _knapp
@@ -362,39 +339,39 @@ const VILLE = {};
   VILLE.knapp = knapp
 })();
 
-(function () {
-  function aabb(a, b) {
-    if (a.x + a.width < b.x) {
-      return false
-    }
-    if (a.x > b.x + b.width) {
-      return false
-    }
-    if (a.y > b.y + b.height) {
-      return false
-    }
-    if (a.y + a.height < b.y) {
-      return false
-    }
-    return true
-  }
-  function kollision(a, b) {
-    let _hantera
-    let _kollision = function* () {
-      while (true) {
-        if (aabb(a, b) && _hantera) {
-          VILLE.sekvens(() => {
-            _hantera()
-          })
-        }
-        yield
-      }
-    }
-    _kollision.hantera = (hantera) => {
-      _hantera = hantera
-      return _kollision
-    }
-    return VILLE.utför(_kollision)
-  }
-  VILLE.kollision = kollision
-})();
+// (function () {
+//   function aabb(a, b) {
+//     if (a.x + a.width < b.x) {
+//       return false
+//     }
+//     if (a.x > b.x + b.width) {
+//       return false
+//     }
+//     if (a.y > b.y + b.height) {
+//       return false
+//     }
+//     if (a.y + a.height < b.y) {
+//       return false
+//     }
+//     return true
+//   }
+//   function kollision(a, b) {
+//     let _hantera
+//     let _kollision = function* () {
+//       while (true) {
+//         if (aabb(a, b) && _hantera) {
+//           VILLE.sekvens(() => {
+//             _hantera()
+//           })
+//         }
+//         yield
+//       }
+//     }
+//     _kollision.hantera = (hantera) => {
+//       _hantera = hantera
+//       return _kollision
+//     }
+//     return VILLE.utför(_kollision)
+//   }
+//   VILLE.kollision = kollision
+// })();
