@@ -51,14 +51,35 @@ const VILLE = {};
   const { spel } = VILLE
 
   function bild(namn) {
-    let sprite = new PIXI.Sprite(PIXI.loader.resources[namn].texture)
-    sprite.anchor.set(0.5)
-    sprite.scale.set(spel.bilder[namn].skala)
-    sprite.position.set(
+    let objekt = new PIXI.Sprite(PIXI.loader.resources[namn].texture)
+    objekt.anchor.set(0.5)
+    objekt.scale.set(spel.bilder[namn].skala)
+    objekt.position.set(
       spel.app.renderer.width / 2, spel.app.renderer.height / 2)
-    return spel.app.stage.addChild(sprite)
+
+    VILLE.instruktion(function* () {
+      VILLE.spel.app.stage.addChild(objekt)
+    })
+    return objekt
   }
   VILLE.bild = bild
+})();
+
+(function () {
+  function text(text) {
+    let objekt = new PIXI.Text(text, {
+      fontFamily: "Helvetica", fontSize: 36, fill: 0xffffff, align: "center"
+    });
+    objekt.anchor.set(0.5)
+    objekt.position.set(
+      VILLE.spel.app.renderer.width / 2, VILLE.spel.app.renderer.height / 2)
+
+    VILLE.instruktion(function* () {
+      VILLE.spel.app.stage.addChild(objekt)
+    })
+    return objekt
+  }
+  VILLE.text = text
 })();
 
 (function () {
