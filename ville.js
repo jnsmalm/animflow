@@ -337,21 +337,23 @@ const VILLE = {};
       let _sekvens
 
       document.addEventListener("keydown", (evt) => {
-        if (evt.key.toLowerCase() === knapp.toLowerCase()) {
-          if (_sekvens) {
-            return
-          }
-          _sekvens = VILLE.sekvens(registrera_instruktioner)
-          if (_upprepa) {
-            _sekvens.upprepa()
-          }
+        if (evt.key.toLowerCase() !== knapp.toLowerCase()) {
+          return
+        }
+        if (_sekvens) {
+          return
+        }
+        _sekvens = VILLE.sekvens(registrera_instruktioner)
+        if (_upprepa) {
+          _sekvens.upprepa()
         }
       })
       document.addEventListener("keyup", (evt) => {
-        if (evt.key.toLowerCase() === knapp.toLowerCase()) {
-          _sekvens.upprepa(0)
-          _sekvens = undefined
+        if (evt.key.toLowerCase() !== knapp.toLowerCase()) {
+          return
         }
+        _sekvens.upprepa(0)
+        _sekvens = undefined
       })
       return _knapp
     }
@@ -359,40 +361,3 @@ const VILLE = {};
   }
   VILLE.knapp = knapp
 })();
-
-// (function () {
-//   function aabb(a, b) {
-//     if (a.x + a.width < b.x) {
-//       return false
-//     }
-//     if (a.x > b.x + b.width) {
-//       return false
-//     }
-//     if (a.y > b.y + b.height) {
-//       return false
-//     }
-//     if (a.y + a.height < b.y) {
-//       return false
-//     }
-//     return true
-//   }
-//   function kollision(a, b) {
-//     let _hantera
-//     let _kollision = function* () {
-//       while (true) {
-//         if (aabb(a, b) && _hantera) {
-//           VILLE.sekvens(() => {
-//             _hantera()
-//           })
-//         }
-//         yield
-//       }
-//     }
-//     _kollision.hantera = (hantera) => {
-//       _hantera = hantera
-//       return _kollision
-//     }
-//     return VILLE.utför(_kollision)
-//   }
-//   VILLE.kollision = kollision
-// })();
