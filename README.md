@@ -25,8 +25,31 @@ spel.ladda()
 spel.start = () => {
   let mario = bild("mario")
   knapp(" ").ner(() => {
-    flytta(mario).till({y: -100}).tid(0.2)
-    flytta(mario).till({y: 0}).tid(0.2)
+    flytta(mario).med({y: -100}).tid(0.2)
+    flytta(mario).med({y: +100}).tid(0.2)
   })
 }
+```
+
+## Dokumentation
+
+### Flytta
+
+Funktionen `flytta` flyttar på ett objekt från en position till en annan. 
+Exemplet nedan flyttar ett objekt till position x = 100, y = 100 på en sekund.
+```
+flytta(objekt).till({x: 100, y: 100}).tid(1)
+```
+Om du istället vill flytta objektet omedelbart skriver du följande (struntar 
+alltså i att skriva `tid`):
+```
+flytta(objekt).till({x: 100, y: 100})
+```
+För att endast flytta objektet horisontellt kan du skriva:
+```
+flytta(objekt).till({x: 100}).tid(1)
+```
+Om du vill flytta ett objekt med ett relativt värde (istället för ett absolut) använder du `med` istället:
+```
+flytta(objekt).med({x: 100, y: 100}).tid(1)
 ```
