@@ -241,11 +241,21 @@ const VILLE = {};
       yield* interpolera()
     }
     _flytta.med = (med) => {
-      Object.assign(_med, med)
+      if (med.x !== undefined) {
+        _med.x = med.x
+      }
+      if (med.y !== undefined) {
+        _med.y = med.y
+      }
       return _flytta
     }
     _flytta.till = (till) => {
-      Object.assign(_till, till)
+      if (till.x !== undefined) {
+        _till.x = till.x
+      }
+      if (till.y !== undefined) {
+        _till.y = till.y
+      }
       return _flytta
     }
     _flytta.tid = (tid) => {
