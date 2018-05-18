@@ -115,6 +115,10 @@ const VILLE = {};
     let _instruktion, _flera_instruktioner = [], _upprepa = 1
 
     let _sekvens = function* () {
+      VILLE.instruktion.hantera((instruktion) => {
+        _flera_instruktioner.push(instruktion)
+      }, registrera_instruktioner)
+
       for (let i = 0; i < _upprepa; i++) {
         for (let instruktion of _flera_instruktioner) {
           yield* instruktion()
@@ -126,7 +130,7 @@ const VILLE = {};
       _upprepa = upprepa === undefined ? Number.MAX_SAFE_INTEGER : upprepa
       return _sekvens
     }
-
+    
     if (VILLE.instruktion.finnsHantering()) {
       VILLE.instruktion(_sekvens)
     } else {
@@ -137,10 +141,6 @@ const VILLE = {};
         _instruktion.next()
       })
     }
-    VILLE.instruktion.hantera((instruktion) => {
-      _flera_instruktioner.push(instruktion)
-    }, registrera_instruktioner)
-
     return _sekvens
   }
   VILLE.sekvens = sekvens
@@ -151,6 +151,10 @@ const VILLE = {};
     let _flera_instruktioner = []
 
     let _parallellt = function* () {
+      VILLE.instruktion.hantera((instruktion) => {
+        _flera_instruktioner.splice(0, 0, instruktion)
+      }, registrera_instruktioner)
+
       let _att_göra = _flera_instruktioner.slice()
       for (let i = 0; i < _att_göra.length; i++) {
         _att_göra[i] = _att_göra[i]()
@@ -165,10 +169,6 @@ const VILLE = {};
         yield
       }
     }
-    VILLE.instruktion.hantera((instruktion) => {
-      _flera_instruktioner.splice(0, 0, instruktion)
-    }, registrera_instruktioner)
-
     return VILLE.instruktion(_parallellt)
   }
   VILLE.parallellt = parallellt
