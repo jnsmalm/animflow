@@ -130,7 +130,7 @@ const VILLE = {};
       _upprepa = upprepa === undefined ? Number.MAX_SAFE_INTEGER : upprepa
       return _sekvens
     }
-    
+
     if (VILLE.instruktion.finnsHantering()) {
       VILLE.instruktion(_sekvens)
     } else {
@@ -335,39 +335,60 @@ const VILLE = {};
 })();
 
 (function () {
-  function knapp(knapp) {
-    let _knapp = {}, _upprepa = false
+  let _knappar = {}
 
-    _knapp.upprepa = () => {
-      _upprepa = true
-      return _knapp
+  document.addEventListener("keydown", (evt) => {
+    let knapp = evt.key.toLowerCase()
+    if (!_knappar[knapp] || _knappar[knapp].length === 0) {
+      return
     }
+    // Anropa keydown på det sista elementet i listan
+    _knappar[knapp].slice(-1)[0].keydown()
+  })
 
+  document.addEventListener("keyup", (evt) => {
+    let knapp = evt.key.toLowerCase()
+    if (!_knappar[knapp] || _knappar[knapp].length === 0) {
+      return
+    }
+    // Anropa keyup på det sista elementet i listan
+    _knappar[knapp].slice(-1)[0].keyup()
+  })
+
+  VILLE.knapp = (knapp) => {
+    if (!_knappar[knapp]) {
+      _knappar[knapp] = []
+    }
+    _knapp = {}
+    _knapp.ignorera = () => {
+      _knappar[knapp].pop()
+    }
     _knapp.ner = (registrera_instruktioner) => {
-      let _sekvens
-
-      document.addEventListener("keydown", (evt) => {
-        if (evt.key.toLowerCase() !== knapp.toLowerCase()) {
-          return
+      let _funktion = {
+        keydown: function () {
+          if (_funktion.sekvens) {
+            return
+          }
+          _funktion.sekvens = VILLE.sekvens(registrera_instruktioner)
+          if (_funktion.upprepa) {
+            _funktion.sekvens.upprepa()
+          }
+        },
+        keyup: function () {
+          if (!_funktion.sekvens) {
+            return
+          }
+          _funktion.sekvens.upprepa(0)
+          _funktion.sekvens = undefined
         }
-        if (_sekvens) {
-          return
-        }
-        _sekvens = VILLE.sekvens(registrera_instruktioner)
-        if (_upprepa) {
-          _sekvens.upprepa()
-        }
-      })
-      document.addEventListener("keyup", (evt) => {
-        if (evt.key.toLowerCase() !== knapp.toLowerCase()) {
-          return
-        }
-        _sekvens.upprepa(0)
-        _sekvens = undefined
-      })
-      return _knapp
+      }
+      _knappar[knapp].push(_funktion)
+      let _ner = {}
+      _ner.upprepa = () => {
+        _funktion.upprepa = true
+      }
+      return _ner
     }
     return _knapp
   }
-  VILLE.knapp = knapp
 })();
