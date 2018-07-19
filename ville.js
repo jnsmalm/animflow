@@ -361,7 +361,9 @@ const VILLE = {};
     }
     _knapp = {}
     _knapp.ignorera = () => {
-      _knappar[knapp].pop()
+      VILLE.instruktion(function* () {
+        _knappar[knapp].pop()
+      })
     }
     _knapp.ner = (registrera_instruktioner) => {
       let _funktion = {
@@ -382,7 +384,9 @@ const VILLE = {};
           _funktion.sekvens = undefined
         }
       }
-      _knappar[knapp].push(_funktion)
+      VILLE.instruktion(function* () {
+        _knappar[knapp].push(_funktion)
+      })
       let _ner = {}
       _ner.upprepa = () => {
         _funktion.upprepa = true
