@@ -335,7 +335,7 @@ const VILLE = {};
 })();
 
 (function () {
-  let _knappar = {}
+  let _knappar = {}, _knapp_låsningar = {}
 
   document.addEventListener("keydown", (evt) => {
     let knapp = evt.key.toLowerCase()
@@ -361,14 +361,22 @@ const VILLE = {};
     }
     _knapp = {}
     _knapp.ignorera = () => {
+      // Lås denna knapp för knapptryckningar i väntan på registrering.
+      _knapp_låsningar[knapp] = true
       VILLE.instruktion(function* () {
         _knappar[knapp].pop()
+        // Den nya knappfunktionen har registrerats, släpp på låset.
+        _knapp_låsningar[knapp] = false
       })
     }
     _knapp.ner = (registrera_instruktioner) => {
+      // Lås denna knapp för knapptryckningar i väntan på registrering.
+      _knapp_låsningar[knapp] = true
+
       let _funktion = {
         keydown: function () {
-          if (_funktion.sekvens) {
+          // Om knappen är låst, strunta i det.
+          if (_funktion.sekvens || _knapp_låsningar[knapp]) {
             return
           }
           _funktion.sekvens = VILLE.sekvens(registrera_instruktioner)
@@ -386,6 +394,8 @@ const VILLE = {};
       }
       VILLE.instruktion(function* () {
         _knappar[knapp].push(_funktion)
+        // Den nya knappfunktionen har registrerats, släpp på låset.
+        _knapp_låsningar[knapp] = false
       })
       let _ner = {}
       _ner.upprepa = () => {
