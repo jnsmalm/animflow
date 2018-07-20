@@ -305,6 +305,57 @@ const VILLE = {};
 })();
 
 (function () {
+  function skala(objekt) {
+    let _med = {}, _till = {}, _tid
+
+    let _skala = function* () {
+      let { x = objekt.scale.x, y = objekt.scale.y } = _till
+      if (_med.x || _med.y) {
+        x = objekt.scale.x + (_med.x || 0)
+        y = objekt.scale.y + (_med.y || 0)
+      }
+      let interpolera =
+        VILLE.interpolera(objekt.scale).till({ x: x, y: y }).tid(_tid)
+      yield* interpolera()
+    }
+    _skala.med = (med) => {
+      if (typeof med === "number") {
+        _med.x = med
+        _med.y = med
+      } else {
+        if (med.x !== undefined) {
+          _med.x = med.x
+        }
+        if (med.y !== undefined) {
+          _med.y = med.y
+        }
+      }
+      return _skala
+    }
+    _skala.till = (till) => {
+      if (typeof till === "number") {
+        _till.x = till
+        _till.y = till
+      } else {
+        if (till.x !== undefined) {
+          _till.x = till.x
+        }
+        if (till.y !== undefined) {
+          _till.y = till.y
+        }
+      }
+      return _skala
+    }
+    _skala.tid = (tid) => {
+      _tid = tid
+      return _skala
+    }
+    return VILLE.instruktion(_skala)
+  }
+  VILLE.skala = skala
+})();
+
+(function () {
   function visa(objekt) {
     let _tid
     let _visa = function* () {
