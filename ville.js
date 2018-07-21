@@ -175,15 +175,22 @@ const VILLE = {};
 })();
 
 (function () {
-  function vänta(tid) {
-    let _vänta = function* () {
+  function vänta(tid = Number.MAX_VALUE) {
+    let _fortsätt = false
+    VILLE.instruktion(function* () {
       let passerad_tid = 0
-      while (passerad_tid < tid) {
+      while (passerad_tid < tid && !_fortsätt) {
         passerad_tid += VILLE.spel.app.ticker.elapsedMS / 1000
         yield
       }
+    })
+    let _vänta = {}
+    _vänta.fortsätt = () => {
+      VILLE.instruktion(function* () {
+        _fortsätt = true
+      })
     }
-    return VILLE.instruktion(_vänta)
+    return _vänta
   }
   VILLE.vänta = vänta
 })();
