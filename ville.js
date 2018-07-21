@@ -196,6 +196,30 @@ const VILLE = {};
 })();
 
 (function () {
+  VILLE.fortsätt = (registrera_instruktioner) => {
+    let _instruktion, _flera_instruktioner = []
+
+    let _fortsätt = function* () {
+      VILLE.instruktion.hantera((instruktion) => {
+        _flera_instruktioner.push(instruktion)
+      }, registrera_instruktioner)
+
+      for (let instruktion of _flera_instruktioner) {
+        yield* instruktion()
+      }
+    }
+    VILLE.instruktion(function* () {
+      VILLE.spel.app.ticker.add(() => {
+        if (!_instruktion) {
+          _instruktion = _fortsätt()
+        }
+        _instruktion.next()
+      })
+    })
+  }
+})();
+
+(function () {
   function linjär_interpolation(a, b, t) {
     return a + (b - a) * t
   }
