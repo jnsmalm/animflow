@@ -112,14 +112,16 @@ const VILLE = {};
 
 (function () {
   function sekvens(registrera_instruktioner) {
-    let _instruktion, _flera_instruktioner = [], _upprepa = 1
+    let _instruktion, _upprepa = 1
 
     let _sekvens = function* () {
-      VILLE.instruktion.hantera((instruktion) => {
-        _flera_instruktioner.push(instruktion)
-      }, registrera_instruktioner)
-
       for (let i = 0; i < _upprepa; i++) {
+        let _flera_instruktioner = []
+
+        VILLE.instruktion.hantera((instruktion) => {
+          _flera_instruktioner.push(instruktion)
+        }, registrera_instruktioner)
+        
         for (let instruktion of _flera_instruktioner) {
           yield* instruktion()
         }
@@ -197,9 +199,8 @@ const VILLE = {};
 
 (function () {
   VILLE.fortsätt = (registrera_instruktioner) => {
-    let _instruktion, _flera_instruktioner = []
-
     let _fortsätt = function* () {
+      let _flera_instruktioner = []
       VILLE.instruktion.hantera((instruktion) => {
         _flera_instruktioner.push(instruktion)
       }, registrera_instruktioner)
@@ -209,12 +210,13 @@ const VILLE = {};
       }
     }
     VILLE.instruktion(function* () {
-      VILLE.spel.app.ticker.add(() => {
-        if (!_instruktion) {
-          _instruktion = _fortsätt()
+      let _instruktion = _fortsätt()
+      let _tick = () => {
+        if (_instruktion.next().done) {
+          VILLE.spel.app.ticker.remove(_tick)
         }
-        _instruktion.next()
-      })
+      }
+      VILLE.spel.app.ticker.add(_tick)
     })
   }
 })();
