@@ -112,7 +112,7 @@ const VILLE = {};
 
 (function () {
   function sekvens(registrera_instruktioner) {
-    let _instruktion, _upprepa = 1
+    let _upprepa = 1
 
     let _sekvens = function* () {
       for (let i = 0; i < _upprepa; i++) {
@@ -121,7 +121,7 @@ const VILLE = {};
         VILLE.instruktion.hantera((instruktion) => {
           _flera_instruktioner.push(instruktion)
         }, registrera_instruktioner)
-        
+
         for (let instruktion of _flera_instruktioner) {
           yield* instruktion()
         }
@@ -136,12 +136,13 @@ const VILLE = {};
     if (VILLE.instruktion.finnsHantering()) {
       VILLE.instruktion(_sekvens)
     } else {
-      VILLE.spel.app.ticker.add(() => {
-        if (!_instruktion) {
-          _instruktion = _sekvens()
+      let _instruktion = _sekvens()
+      let _tick = () => {
+        if (_instruktion.next().done) {
+          VILLE.spel.app.ticker.remove(_tick)
         }
-        _instruktion.next()
-      })
+      }
+      VILLE.spel.app.ticker.add(_tick)
     }
     return _sekvens
   }
