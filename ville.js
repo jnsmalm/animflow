@@ -112,7 +112,7 @@ const VILLE = {};
 
 (function () {
   function sekvens(registrera_instruktioner) {
-    let _upprepa = 1
+    let _upprepa = 1, _avbryt = false
 
     let _sekvens = function* () {
       for (let i = 0; i < _upprepa; i++) {
@@ -123,7 +123,12 @@ const VILLE = {};
         }, registrera_instruktioner)
 
         for (let instruktion of _flera_instruktioner) {
-          yield* instruktion()
+          for (let steg of instruktion()) {
+            if (_avbryt) {
+              return
+            }
+            yield
+          }
         }
         yield
       }
@@ -131,6 +136,11 @@ const VILLE = {};
     _sekvens.upprepa = (upprepa) => {
       _upprepa = upprepa === undefined ? Number.MAX_SAFE_INTEGER : upprepa
       return _sekvens
+    }
+    _sekvens.avbryt = () => {
+      VILLE.instruktion(function* () {
+        _avbryt = true
+      })
     }
 
     if (VILLE.instruktion.finnsHantering()) {
