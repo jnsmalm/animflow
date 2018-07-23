@@ -262,19 +262,25 @@ const VILLE = {};
 
 (function () {
   function flytta(objekt) {
-    let _med = {}, _till = {}, _tid
+    let _med, _till, _tid
 
     let _flytta = function* () {
-      let { x = objekt.x, y = objekt.y } = _till
-      if (_med.x || _med.y) {
-        x = objekt.x + (_med.x || 0)
-        y = objekt.y + (_med.y || 0)
+      let interpolera
+      if (_till) {
+        interpolera = VILLE.interpolera(objekt).till(_till).tid(_tid)
+      } else {
+        if (_med.x) {
+          _med.x += objekt.x
+        }
+        if (_med.y) {
+          _med.y += objekt.y
+        }
+        interpolera = VILLE.interpolera(objekt).till(_med).tid(_tid)
       }
-      let interpolera =
-        VILLE.interpolera(objekt).till({ x: x, y: y }).tid(_tid)
       yield* interpolera()
     }
     _flytta.med = (med) => {
+      _med = {}
       if (med.x !== undefined) {
         _med.x = med.x
       }
@@ -284,6 +290,7 @@ const VILLE = {};
       return _flytta
     }
     _flytta.till = (till) => {
+      _till = {}
       if (till.x !== undefined) {
         _till.x = till.x
       }
