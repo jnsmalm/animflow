@@ -508,3 +508,27 @@ const VILLE = {};
     return _knapp
   }
 })();
+
+(function () {
+  VILLE.ljud = (sökväg) => {
+    let _klar = false
+    let _ljud = function* () {
+      let audio = new Audio(sökväg)
+      audio.onended = () => {
+        _klar = true
+      }
+      audio.play()
+    }
+    _ljud.vänta = () => {
+      if (_klar) {
+        return
+      }
+      VILLE.instruktion(function* () {
+        while (!_klar) {
+          yield
+        }
+      })
+    }
+    return VILLE.instruktion(_ljud)
+  }
+})();
