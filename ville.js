@@ -112,7 +112,7 @@ const VILLE = {};
 
 (function () {
   function sekvens(registrera_instruktioner) {
-    let _upprepa = 1, _avbryt = false
+    let _upprepa = 1, _avbryt = false, _färdig = false
 
     let _sekvens = function* () {
       for (let i = 0; i < _upprepa; i++) {
@@ -125,6 +125,7 @@ const VILLE = {};
         for (let instruktion of _flera_instruktioner) {
           for (let steg of instruktion()) {
             if (_avbryt) {
+              _färdig = true
               return
             }
             yield
@@ -132,6 +133,7 @@ const VILLE = {};
         }
         yield
       }
+      _färdig = true
     }
     _sekvens.upprepa = (upprepa) => {
       _upprepa = upprepa === undefined ? Number.MAX_SAFE_INTEGER : upprepa
@@ -141,6 +143,9 @@ const VILLE = {};
       VILLE.instruktion(function* () {
         _avbryt = true
       })
+    }
+    _sekvens.färdig = () => {
+      return _färdig
     }
 
     if (VILLE.instruktion.finnsHantering()) {
@@ -437,76 +442,127 @@ const VILLE = {};
 })();
 
 (function () {
-  let _knappar = {}, _knapp_låsningar = {}
 
-  document.addEventListener("keydown", (evt) => {
-    let knapp = evt.key.toLowerCase()
-    if (!_knappar[knapp] || _knappar[knapp].length === 0) {
-      return
+  class KnappSekvens {
+    constructor(registrera_instruktioner) {
+      this.registrera_instruktioner = registrera_instruktioner
     }
-    // Anropa keydown på det sista elementet i listan
-    _knappar[knapp].slice(-1)[0].keydown()
-  })
+    utför() {
+      if (this.sekvens && !this.sekvens.färdig()) {
+        return
+      }
+      this.sekvens = VILLE.sekvens(this.registrera_instruktioner)
+    }
+  }
+
+  class Knapphanterare {
+    constructor() {
+      this.ner = {}
+      this.upp = {}
+    }
+    lägg_till_ner(knapp, knapp_sekvens) {
+      knapp = knapp.toLowerCase()
+      if (!this.ner[knapp]) {
+        this.ner[knapp] = []
+      }
+      this.ner[knapp].push(knapp_sekvens)
+    }
+    lägg_till_upp(knapp, knapp_sekvens) {
+      knapp = knapp.toLowerCase()
+      if (!this.upp[knapp]) {
+        this.upp[knapp] = []
+      }
+      this.upp[knapp].push(knapp_sekvens)
+    }
+    ta_bort_ner(knapp) {
+      knapp = knapp.toLowerCase()
+      if (!this.ner[knapp]) {
+        return
+      }
+      this.ner[knapp].pop()
+    }
+    ta_bort_upp(knapp) {
+      knapp = knapp.toLowerCase()
+      if (!this.upp[knapp]) {
+        return
+      }
+      this.upp[knapp].pop()
+    }
+    knapp_upp(knapp) {
+      knapp = knapp.toLowerCase()
+      if (!this.upp[knapp] || this.upp[knapp].length === 0) {
+        return
+      }
+      this.upp[knapp].slice(-1)[0].utför()
+    }
+    knapp_ner(knapp) {
+      knapp = knapp.toLowerCase()
+      if (!this.ner[knapp] || this.ner[knapp].length === 0) {
+        return
+      }
+      this.ner[knapp].slice(-1)[0].utför()
+    }
+  }
+
+  class Knapp {
+    constructor(knapp) {
+      this.knapp = knapp
+    }
+    ner(registrera_instruktioner) {
+      let self = this
+      VILLE.instruktion(function* () {
+        hanterare.lägg_till_ner(
+          self.knapp, new KnappSekvens(registrera_instruktioner))
+      })
+      return new KnappNer(this.knapp)
+    }
+    upp(registrera_instruktioner) {
+      let self = this
+      VILLE.instruktion(function* () {
+        hanterare.lägg_till_upp(
+          self.knapp, new KnappSekvens(registrera_instruktioner))
+      })
+      return new KnappUpp(this.knapp)
+    }
+  }
+
+  class KnappNer {
+    constructor(knapp) {
+      this.knapp = knapp
+    }
+    ignorera() {
+      let self = this
+      VILLE.instruktion(function* () {
+        hanterare.ta_bort_ner(self.knapp)
+      })
+    }
+  }
+
+  class KnappUpp {
+    constructor(knapp) {
+      this.knapp = knapp
+    }
+    ignorera() {
+      let self = this
+      VILLE.instruktion(function* () {
+        hanterare.ta_bort_upp(self.knapp)
+      })
+    }
+  }
+
+  let hanterare = new Knapphanterare()
 
   document.addEventListener("keyup", (evt) => {
-    let knapp = evt.key.toLowerCase()
-    if (!_knappar[knapp] || _knappar[knapp].length === 0) {
-      return
-    }
-    // Anropa keyup på det sista elementet i listan
-    _knappar[knapp].slice(-1)[0].keyup()
+    hanterare.knapp_upp(evt.key)
+  })
+  document.addEventListener("keydown", (evt) => {
+    hanterare.knapp_ner(evt.key)
   })
 
   VILLE.knapp = (knapp) => {
-    if (!_knappar[knapp]) {
-      _knappar[knapp] = []
-    }
-    _knapp = {}
-    _knapp.ignorera = () => {
-      // Lås denna knapp för knapptryckningar i väntan på registrering.
-      _knapp_låsningar[knapp] = true
-      VILLE.instruktion(function* () {
-        _knappar[knapp].pop()
-        // Den nya knappfunktionen har registrerats, släpp på låset.
-        _knapp_låsningar[knapp] = false
-      })
-    }
-    _knapp.ner = (registrera_instruktioner) => {
-      // Lås denna knapp för knapptryckningar i väntan på registrering.
-      _knapp_låsningar[knapp] = true
-
-      let _funktion = {
-        keydown: function () {
-          // Om knappen är låst, strunta i det.
-          if (_funktion.sekvens || _knapp_låsningar[knapp]) {
-            return
-          }
-          _funktion.sekvens = VILLE.sekvens(registrera_instruktioner)
-          if (_funktion.upprepa) {
-            _funktion.sekvens.upprepa()
-          }
-        },
-        keyup: function () {
-          if (!_funktion.sekvens) {
-            return
-          }
-          _funktion.sekvens.upprepa(0)
-          _funktion.sekvens = undefined
-        }
-      }
-      VILLE.instruktion(function* () {
-        _knappar[knapp].push(_funktion)
-        // Den nya knappfunktionen har registrerats, släpp på låset.
-        _knapp_låsningar[knapp] = false
-      })
-      let _ner = {}
-      _ner.upprepa = () => {
-        _funktion.upprepa = true
-      }
-      return _ner
-    }
-    return _knapp
+    return new Knapp(knapp)
   }
+
 })();
 
 (function () {
