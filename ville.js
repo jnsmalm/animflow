@@ -111,21 +111,45 @@ const VILLE = {};
 })();
 
 (function () {
-  function sekvens(registrera_instruktioner) {
-    let _upprepa = 1, _avbryt = false, _färdig = false
 
-    let _sekvens = function* () {
-      for (let i = 0; i < _upprepa; i++) {
+  class Sekvens {
+    constructor(registrera_instruktioner) {
+      this._registrera_instruktioner = registrera_instruktioner
+      this._upprepa = 1
+      this._färdig = false
+      this._avbryt = false
+
+      let self = this
+      if (VILLE.instruktion.finnsHantering()) {
+        VILLE.instruktion(function* () {
+          yield* self.utför()
+        })
+      } else {
+        let utför = self.utför()
+        let tick = () => {
+          if (utför.next().done) {
+            VILLE.spel.app.ticker.remove(tick)
+          }
+        }
+        VILLE.spel.app.ticker.add(tick)
+      }
+    }
+    upprepa(antal = Number.MAX_VALUE) {
+      this._upprepa = antal
+      return this
+    }
+    *utför() {
+      for (let i = 0; i < this._upprepa; i++) {
         let _flera_instruktioner = []
 
         VILLE.instruktion.hantera((instruktion) => {
           _flera_instruktioner.push(instruktion)
-        }, registrera_instruktioner)
+        }, this._registrera_instruktioner)
 
         for (let instruktion of _flera_instruktioner) {
           for (let steg of instruktion()) {
-            if (_avbryt) {
-              _färdig = true
+            if (this._avbryt) {
+              this._färdig = true
               return
             }
             yield
@@ -133,35 +157,31 @@ const VILLE = {};
         }
         yield
       }
-      _färdig = true
+      this._färdig = true
     }
-    _sekvens.upprepa = (upprepa) => {
-      _upprepa = upprepa === undefined ? Number.MAX_SAFE_INTEGER : upprepa
-      return _sekvens
-    }
-    _sekvens.avbryt = () => {
+    vänta() {
+      let self = this
       VILLE.instruktion(function* () {
-        _avbryt = true
+        while (!self._färdig) {
+          yield
+        }
       })
     }
-    _sekvens.färdig = () => {
-      return _färdig
+    avbryt() {
+      let self = this
+      VILLE.instruktion(function* () {
+        self._avbryt = true
+      })
     }
-
-    if (VILLE.instruktion.finnsHantering()) {
-      VILLE.instruktion(_sekvens)
-    } else {
-      let _instruktion = _sekvens()
-      let _tick = () => {
-        if (_instruktion.next().done) {
-          VILLE.spel.app.ticker.remove(_tick)
-        }
-      }
-      VILLE.spel.app.ticker.add(_tick)
+    färdig() {
+      return this._färdig
     }
-    return _sekvens
   }
-  VILLE.sekvens = sekvens
+
+  VILLE.sekvens = (registrera_instruktioner) => {
+    return new Sekvens(registrera_instruktioner)
+  }
+
 })();
 
 (function () {
