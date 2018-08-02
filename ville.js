@@ -93,71 +93,19 @@ const VILLE = {};
 })();
 
 (function () {
-  let _hanteringar = []
-
-  function instruktion(instruktion) {
-    _hanteringar[_hanteringar.length - 1](instruktion)
-    return instruktion
-  }
-  instruktion.hantera = (hantera, registrera_instruktioner) => {
-    _hanteringar.push(hantera)
-    registrera_instruktioner()
-    _hanteringar.pop()
-  }
-  instruktion.finnsHantering = () => {
-    return _hanteringar.length > 0
-  }
-  VILLE.instruktion = instruktion
-})();
-
-(function () {
 
   class Sekvens {
-    constructor(registrera_instruktioner) {
-      this._registrera_instruktioner = registrera_instruktioner
+    constructor() {
+      this._avbryt = false
       this._upprepa = 1
       this._färdig = false
-      this._avbryt = false
-
-      let self = this
-      if (VILLE.instruktion.finnsHantering()) {
-        VILLE.instruktion(function* () {
-          yield* self.utför()
-        })
-      } else {
-        let utför = self.utför()
-        let tick = () => {
-          if (utför.next().done) {
-            VILLE.spel.app.ticker.remove(tick)
-          }
-        }
-        VILLE.spel.app.ticker.add(tick)
-      }
+    }
+    färdig() {
+      return this._färdig
     }
     upprepa(antal = Number.MAX_VALUE) {
       this._upprepa = antal
       return this
-    }
-    *utför() {
-      for (let i = 0; i < this._upprepa; i++) {
-        let _flera_instruktioner = []
-
-        VILLE.instruktion.hantera((instruktion) => {
-          _flera_instruktioner.push(instruktion)
-        }, this._registrera_instruktioner)
-
-        for (let instruktion of _flera_instruktioner) {
-          for (let steg of instruktion()) {
-            if (this._avbryt) {
-              this._färdig = true
-              return
-            }
-            yield
-          }
-        }
-        yield
-      }
-      this._färdig = true
     }
     vänta() {
       let self = this
@@ -173,43 +121,115 @@ const VILLE = {};
         self._avbryt = true
       })
     }
-    färdig() {
-      return this._färdig
-    }
   }
 
-  VILLE.sekvens = (registrera_instruktioner) => {
-    return new Sekvens(registrera_instruktioner)
-  }
+  let utförare = []
 
-})();
-
-(function () {
-  function parallellt(registrera_instruktioner) {
-    let _flera_instruktioner = []
-
-    let _parallellt = function* () {
-      VILLE.instruktion.hantera((instruktion) => {
-        _flera_instruktioner.splice(0, 0, instruktion)
-      }, registrera_instruktioner)
-
-      let _att_göra = _flera_instruktioner.slice()
-      for (let i = 0; i < _att_göra.length; i++) {
-        _att_göra[i] = _att_göra[i]()
+  function starta(exekvera, registrera_instruktioner) {
+    let sekvens = new Sekvens()
+    if (utförare.length > 0) {
+      VILLE.instruktion(function* () {
+        yield* exekvera(sekvens, registrera_instruktioner)
+      })
+    } else {
+      let exekvering = exekvera(sekvens, registrera_instruktioner)
+      let tick = () => {
+        if (exekvering.next().done) {
+          VILLE.spel.app.ticker.remove(tick)
+        }
       }
-      while (_att_göra.length > 0) {
-        for (let i = _att_göra.length - 1; i >= 0; i--) {
-          let resultat = _att_göra[i].next()
-          if (resultat && resultat.done) {
-            _att_göra.splice(i, 1)
+      VILLE.spel.app.ticker.add(tick)
+    }
+    return sekvens
+  }
+
+  function* sekvens(sekvens, registrera_instruktioner) {
+    for (let i = 0; i < sekvens._upprepa; i++) {
+      let instruktioner = hämta_instruktioner(
+        registrera_instruktioner
+      )
+      for (let instruktion of instruktioner) {
+        for (let steg of instruktion()) {
+          if (sekvens._avbryt) {
+            sekvens._färdig = true
+            return
+          }
+          yield
+        }
+      }
+      yield
+    }
+    sekvens._färdig = true
+  }
+
+  function* parallellt(sekvens, registrera_instruktioner) {
+    for (let i = 0; i < sekvens._upprepa; i++) {
+      let instruktioner = hämta_instruktioner(
+        registrera_instruktioner
+      )
+      instruktioner.reverse()
+      for (let i = 0; i < instruktioner.length; i++) {
+        instruktioner[i] = instruktioner[i]()
+      }
+      while (instruktioner.length > 0) {
+        for (let i = instruktioner.length - 1; i >= 0; i--) {
+          if (sekvens._avbryt) {
+            sekvens._färdig = true
+            return
+          }
+          if (instruktioner[i].next().done) {
+            instruktioner.splice(i, 1)
           }
         }
         yield
       }
     }
-    return VILLE.instruktion(_parallellt)
+    sekvens._färdig = true
   }
-  VILLE.parallellt = parallellt
+
+  function hämta_instruktioner(registrera_instruktioner) {
+    let instruktioner = []
+    utförare.push({
+      lägg_till: (instruktion) => {
+        instruktioner.push(instruktion)
+      }
+    })
+    registrera_instruktioner()
+    utförare.pop()
+    return instruktioner
+  }
+
+  VILLE.sekvens = (registrera_instruktioner) => {
+    return starta(sekvens, registrera_instruktioner)
+  }
+
+  VILLE.parallellt = (registrera_instruktioner) => {
+    return starta(parallellt, registrera_instruktioner)
+  }
+
+  VILLE.fortsätt = (registrera_instruktioner) => {
+    let exekvera = function* () {
+      let instruktioner = hämta_instruktioner(registrera_instruktioner)
+      for (let instruktion of instruktioner) {
+        yield* instruktion()
+      }
+    }
+    VILLE.instruktion(function* () {
+      let exekvering = exekvera()
+      let tick = () => {
+        if (exekvering.next().done) {
+          VILLE.spel.app.ticker.remove(tick)
+        }
+      }
+      VILLE.spel.app.ticker.add(tick)
+    })
+  }
+
+  VILLE.instruktion = (instruktion) => {
+    utförare[utförare.length - 1].lägg_till(instruktion)
+    return instruktion
+  }
+
 })();
 
 (function () {
@@ -231,30 +251,6 @@ const VILLE = {};
     return _vänta
   }
   VILLE.vänta = vänta
-})();
-
-(function () {
-  VILLE.fortsätt = (registrera_instruktioner) => {
-    let _fortsätt = function* () {
-      let _flera_instruktioner = []
-      VILLE.instruktion.hantera((instruktion) => {
-        _flera_instruktioner.push(instruktion)
-      }, registrera_instruktioner)
-
-      for (let instruktion of _flera_instruktioner) {
-        yield* instruktion()
-      }
-    }
-    VILLE.instruktion(function* () {
-      let _instruktion = _fortsätt()
-      let _tick = () => {
-        if (_instruktion.next().done) {
-          VILLE.spel.app.ticker.remove(_tick)
-        }
-      }
-      VILLE.spel.app.ticker.add(_tick)
-    })
-  }
 })();
 
 (function () {
