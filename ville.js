@@ -23,63 +23,86 @@ SOFTWARE.*/
 const VILLE = {};
 
 (function () {
-  function ladda() {
-    fetch("konfig.json").then((svar) => {
-      return svar.json()
-    }).then((konfig) => {
-      Object.assign(spel, konfig)
-      for (let namn in konfig.bilder) {
-        PIXI.loader.add(namn, konfig.bilder[namn].url)
-      }
-      PIXI.loader.load(() => {
-        if (this.start) {
-          VILLE.sekvens(this.start)
+
+  class Spel {
+    constructor() {
+      this.app = new PIXI.Application()
+      this.bredd = 1280
+      this.höjd = 720
+    }
+    ladda() {
+      fetch("konfig.json").then((svar) => {
+        return svar.json()
+      }).then((konfig) => {
+        Object.assign(spel, konfig)
+        for (let namn in konfig.bilder) {
+          PIXI.loader.add(namn, konfig.bilder[namn].url)
         }
+        PIXI.loader.load(() => {
+          VILLE.sekvens(this.start)
+        })
       })
-    })
-    this.app = new PIXI.Application()
-    document.body.appendChild(this.app.view)
+      document.body.appendChild(this.app.view)
+    }
+    start() {
+      // Skrivs över av användaren
+    }
+    storlek(bredd, höjd) {
+      this.bredd = bredd
+      this.höjd = höjd
+      this.app.renderer.resize(bredd, höjd)
+    }
+    fyll_ut() {
+      window.onresize = () => {
+        this.app.renderer.resize(window.innerWidth, window.innerHeight)
+        let scale = Math.min(
+          window.innerWidth / this.bredd,
+          window.innerHeight / this.höjd
+        )
+        this.app.stage.position.set(
+          window.innerWidth / 2 - this.bredd * scale / 2,
+          window.innerHeight / 2 - this.höjd * scale / 2
+        )
+        this.app.stage.scale.set(scale)
+      }
+      window.onresize()
+    }
   }
 
-  VILLE.spel = {
-    ladda: ladda,
-    start: () => { }
+  VILLE.spel = new Spel()
+})();
+
+(function () {
+  const { spel } = VILLE
+
+  VILLE.bild = (namn) => {
+    let objekt = new PIXI.Sprite(PIXI.loader.resources[namn].texture)
+    objekt.anchor.set(0.5)
+    objekt.scale.set(spel.bilder[namn].skala)
+    objekt.position.set(spel.bredd / 2, spel.höjd / 2)
+
+    VILLE.instruktion(function* () {
+      VILLE.spel.app.stage.addChild(objekt)
+    })
+    return objekt
   }
 })();
 
 (function () {
   const { spel } = VILLE
 
-  function bild(namn) {
-    let objekt = new PIXI.Sprite(PIXI.loader.resources[namn].texture)
-    objekt.anchor.set(0.5)
-    objekt.scale.set(spel.bilder[namn].skala)
-    objekt.position.set(
-      spel.app.renderer.width / 2, spel.app.renderer.height / 2)
-
-    VILLE.instruktion(function* () {
-      VILLE.spel.app.stage.addChild(objekt)
-    })
-    return objekt
-  }
-  VILLE.bild = bild
-})();
-
-(function () {
-  function text(text) {
+  VILLE.text = (text) => {
     let objekt = new PIXI.Text(text, {
       fontFamily: "Helvetica", fontSize: 36, fill: 0xffffff, align: "center"
     });
     objekt.anchor.set(0.5)
-    objekt.position.set(
-      VILLE.spel.app.renderer.width / 2, VILLE.spel.app.renderer.height / 2)
+    objekt.position.set(spel.bredd / 2, spel.höjd / 2)
 
     VILLE.instruktion(function* () {
       VILLE.spel.app.stage.addChild(objekt)
     })
     return objekt
   }
-  VILLE.text = text
 })();
 
 (function () {
