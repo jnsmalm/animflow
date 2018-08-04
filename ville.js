@@ -27,8 +27,7 @@ const VILLE = {};
   class Spel {
     constructor() {
       this.app = new PIXI.Application()
-      this.bredd = 1280
-      this.höjd = 720
+      this.storlek(800, 600)
     }
     ladda() {
       fetch("konfig.json").then((svar) => {
