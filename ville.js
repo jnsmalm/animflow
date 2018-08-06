@@ -107,7 +107,9 @@ const VILLE = {};
 (function () {
   function ta_bort(objekt) {
     let _ta_bort = function* () {
-      objekt.parent.removeChild(objekt)
+      if (objekt.parent) {
+        objekt.parent.removeChild(objekt)
+      }
     }
     VILLE.instruktion(_ta_bort)
   }
