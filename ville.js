@@ -157,12 +157,13 @@ const VILLE = {};
       })
     } else {
       let exekvering = exekvera(sekvens, registrera_instruktioner)
-      let tick = () => {
+      let ticker = new PIXI.ticker.Ticker()
+      ticker.add(() => {
         if (exekvering.next().done) {
-          VILLE.spel.app.ticker.remove(tick)
+          ticker.destroy()
         }
-      }
-      VILLE.spel.app.ticker.add(tick)
+      })
+      ticker.start()
     }
     return sekvens
   }
@@ -240,12 +241,13 @@ const VILLE = {};
     }
     VILLE.instruktion(function* () {
       let exekvering = exekvera()
-      let tick = () => {
+      let ticker = new PIXI.ticker.Ticker()
+      ticker.add(() => {
         if (exekvering.next().done) {
-          VILLE.spel.app.ticker.remove(tick)
+          ticker.destroy()
         }
-      }
-      VILLE.spel.app.ticker.add(tick)
+      })
+      ticker.start()
     })
   }
 
