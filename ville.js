@@ -20,7 +20,39 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.*/
 
-const VILLE = {};
+const VILLE = {}
+
+VILLE.uppgift = (instruktion) => {
+  if (typeof instruktion !== "function") {
+    throw new TypeError(
+      "En uppgift kan bara ta emot en 'generator function' som argument")
+  }
+  instruktion = instruktion()
+  if (!instruktion || !instruktion.next) {
+    throw new TypeError(
+      "En uppgift kan bara ta emot en 'generator function' som argument")
+  }
+  let uppdatera = () => {
+    if (!instruktion.next().done) {
+      requestAnimationFrame(uppdatera)
+    }
+  }
+  requestAnimationFrame(uppdatera)
+}
+
+{
+  let senaste = 0, tid = 0
+  let tidtagning = (tidstämpel) => {
+    tid = tidstämpel - senaste
+    senaste = tidstämpel
+    requestAnimationFrame(tidtagning)
+  }
+  requestAnimationFrame(tidtagning)
+
+  VILLE.tid = () => {
+    return tid / 1000
+  }
+}
 
 (function () {
 
@@ -156,14 +188,9 @@ const VILLE = {};
         yield* exekvera(sekvens, registrera_instruktioner)
       })
     } else {
-      let exekvering = exekvera(sekvens, registrera_instruktioner)
-      let ticker = new PIXI.ticker.Ticker()
-      ticker.add(() => {
-        if (exekvering.next().done) {
-          ticker.destroy()
-        }
+      VILLE.uppgift(function* () {
+        yield* exekvera(sekvens, registrera_instruktioner)
       })
-      ticker.start()
     }
     return sekvens
   }
@@ -233,21 +260,13 @@ const VILLE = {};
   }
 
   VILLE.fortsätt = (registrera_instruktioner) => {
-    let exekvera = function* () {
-      let instruktioner = hämta_instruktioner(registrera_instruktioner)
-      for (let instruktion of instruktioner) {
-        yield* instruktion()
-      }
-    }
     VILLE.instruktion(function* () {
-      let exekvering = exekvera()
-      let ticker = new PIXI.ticker.Ticker()
-      ticker.add(() => {
-        if (exekvering.next().done) {
-          ticker.destroy()
+      VILLE.uppgift(function* () {
+        let instruktioner = hämta_instruktioner(registrera_instruktioner)
+        for (let instruktion of instruktioner) {
+          yield* instruktion()
         }
       })
-      ticker.start()
     })
   }
 
@@ -264,7 +283,7 @@ const VILLE = {};
     VILLE.instruktion(function* () {
       let passerad_tid = 0
       while (passerad_tid < tid && !_fortsätt) {
-        passerad_tid += VILLE.spel.app.ticker.elapsedMS / 1000
+        passerad_tid += VILLE.tid()
         yield
       }
     })
@@ -293,7 +312,7 @@ const VILLE = {};
       }
       let passerad_tid = 0
       while (passerad_tid < _tid) {
-        passerad_tid += spel.app.ticker.elapsedMS / 1000
+        passerad_tid += VILLE.tid()
         for (let namn in från) {
           objekt[namn] = linjär_interpolation(från[namn],
             _till[namn], Math.min(1, passerad_tid / _tid))
