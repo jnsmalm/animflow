@@ -22,44 +22,15 @@ SOFTWARE.*/
 
 const VILLE = {}
 
-VILLE.uppgift = (instruktion) => {
-  if (typeof instruktion !== "function") {
-    throw new TypeError(
-      "En uppgift kan bara ta emot en 'generator function' som argument")
-  }
-  instruktion = instruktion()
-  if (!instruktion || !instruktion.next) {
-    throw new TypeError(
-      "En uppgift kan bara ta emot en 'generator function' som argument")
-  }
-  let uppdatera = () => {
-    if (!instruktion.next().done) {
-      requestAnimationFrame(uppdatera)
-    }
-  }
-  requestAnimationFrame(uppdatera)
-}
-
 {
-  let senaste = 0, tid = 0
-  let tidtagning = (tidstämpel) => {
-    tid = tidstämpel - senaste
-    senaste = tidstämpel
-    requestAnimationFrame(tidtagning)
-  }
-  requestAnimationFrame(tidtagning)
-
-  VILLE.tid = () => {
-    return tid / 1000
-  }
-}
-
-(function () {
-
   class Spel {
-    constructor() {
-      this.app = new PIXI.Application()
-      this.storlek(800, 600)
+    initiera(bredd = 800, höjd = 600) {
+      this.renderer = PIXI.autoDetectRenderer({
+        width: bredd,
+        height: höjd
+      })
+      this.root = new PIXI.Container()
+      document.body.appendChild(this.renderer.view)
     }
     ladda() {
       fetch("konfig.json").then((svar) => {
@@ -73,64 +44,92 @@ VILLE.uppgift = (instruktion) => {
           VILLE.sekvens(this.start)
         })
       })
-      document.body.appendChild(this.app.view)
+    }
+    rita() {
+      if (!this.renderer) {
+        return
+      }
+      this.renderer.render(this.root)
     }
     start() {
       // Skrivs över av användaren
     }
-    storlek(bredd, höjd) {
-      this.bredd = bredd
-      this.höjd = höjd
-      this.app.renderer.resize(bredd, höjd)
-    }
     fyll_ut() {
+      let bredd = this.renderer.width
+      let höjd = this.renderer.height
+
       window.onresize = () => {
-        this.app.renderer.resize(window.innerWidth, window.innerHeight)
-        let scale = Math.min(
-          window.innerWidth / this.bredd,
-          window.innerHeight / this.höjd
+        this.renderer.resize(window.innerWidth, window.innerHeight)
+        this.root.position.set(window.innerWidth / 2, window.innerHeight / 2)
+        this.root.scale.set(
+          Math.min(window.innerWidth / bredd, window.innerHeight / höjd)
         )
-        this.app.stage.position.set(
-          window.innerWidth / 2 - this.bredd * scale / 2,
-          window.innerHeight / 2 - this.höjd * scale / 2
-        )
-        this.app.stage.scale.set(scale)
       }
       window.onresize()
     }
   }
 
   VILLE.spel = new Spel()
-})();
+}
+
+{
+  let föregående = 0
+  let tid = 0
+  let uppgifter = []
+
+  let uppdatera = (tidstämpel) => {
+    tid = tidstämpel - föregående
+    föregående = tidstämpel
+    for (let i = uppgifter.length - 1; i >= 0; i--) {
+      if (uppgifter[i].next().done) {
+        uppgifter.splice(i, 1)
+      }
+    }
+    VILLE.spel.rita()
+    requestAnimationFrame(uppdatera)
+  }
+  requestAnimationFrame(uppdatera)
+
+  VILLE.tid = () => {
+    return tid / 1000
+  }
+
+  VILLE.uppgift = (instruktion) => {
+    if (typeof instruktion !== "function") {
+      throw new TypeError(
+        "En uppgift kan bara ta emot en 'generator function' som argument")
+    }
+    instruktion = instruktion()
+    if (!instruktion || !instruktion.next) {
+      throw new TypeError(
+        "En uppgift kan bara ta emot en 'generator function' som argument")
+    }
+    uppgifter.push(instruktion)
+  }
+}
 
 (function () {
-  const { spel } = VILLE
-
   VILLE.bild = (namn) => {
     let objekt = new PIXI.Sprite(PIXI.loader.resources[namn].texture)
     objekt.anchor.set(0.5)
-    objekt.scale.set(spel.bilder[namn].skala)
-    objekt.position.set(spel.bredd / 2, spel.höjd / 2)
+    objekt.scale.set(VILLE.spel.bilder[namn].skala)
 
     VILLE.instruktion(function* () {
-      VILLE.spel.app.stage.addChild(objekt)
+      VILLE.spel.root.addChild(objekt)
     })
     return objekt
   }
 })();
 
 (function () {
-  const { spel } = VILLE
-
   VILLE.text = (text) => {
     let objekt = new PIXI.Text(text, {
       fontFamily: "Helvetica", fontSize: 36, fill: 0xffffff, align: "center"
     });
     objekt.anchor.set(0.5)
-    objekt.position.set(spel.bredd / 2, spel.höjd / 2)
 
     VILLE.instruktion(function* () {
-      VILLE.spel.app.stage.addChild(objekt)
+      VILLE.spel.root.addChild(objekt)
     })
     return objekt
   }
