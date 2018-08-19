@@ -3,6 +3,8 @@
   "version": "1.0.0",
   "description": "Spelramverk för nybörjare som vill lära sig programmera",
   "scripts": {
+    "build": "webpack",
+    "watch": "webpack --watch",
     "start": "browser-sync start --server --watch"
   },
   "repository": {
@@ -16,6 +18,7 @@
   },
   "homepage": "https://github.com/jnsmalm/villejs#readme",
   "dependencies": {
-    "browser-sync": "^2.24.4"
+    "browser-sync": "^2.24.4",
+    "webpack-cli": "^3.1.0"
   }
 }
