@@ -18,7 +18,9 @@ export function sequence(job) {
           yield
         }
       }
-      yield
+      if (_repeat > 1) {
+        yield
+      }
     }
     _completed = true
   }
