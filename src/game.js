@@ -8,7 +8,7 @@ game.init = (width = 800, height = 600) => {
   document.body.appendChild(game.renderer.view)
 }
 
-game.load = () => {
+game.load = (start) => {
   fetch("konfig.json").then((res) => {
     return res.json()
   }).then((config) => {
@@ -17,7 +17,10 @@ game.load = () => {
       PIXI.loader.add(name, config.bilder[name].url)
     }
     PIXI.loader.load(() => {
-      sequence(game.start)
+      if (!start) {
+        return
+      }
+      sequence(start)
     })
   })
 }
