@@ -1,7 +1,12 @@
-const { spel, bild } = VILLE
+const { game, sprite, key, move, ease } = VILLE
 
-spel.ladda()
+game.init()
+game.autoscale()
 
-spel.start = () => {
-  let mario = bild("mario")
-}
+game.load(() => {
+  let mario = sprite("mario")
+  key(" ").down(() => {
+    move(mario).by({ y: -100 }).time(0.2).ease(ease.sine_out)
+    move(mario).by({ y: +100 }).time(0.2).ease(ease.sine_in)
+  })
+})
