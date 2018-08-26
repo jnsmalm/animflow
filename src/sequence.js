@@ -10,6 +10,10 @@ export function sequence(job) {
     for (let i = 0; i < _repeat; i++) {
       let tasks = get_tasks(job)
       for (let task of tasks) {
+        if (_cancel) {
+          _completed = true
+          return
+        }
         for (let step of task()) {
           if (_cancel) {
             _completed = true

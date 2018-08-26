@@ -14,6 +14,10 @@ export function repeat(job) {
       }
       let tasks = get_tasks(job)
       for (let task of tasks) {
+        if (_cancel) {
+          _completed = true
+          return
+        }
         for (let step of task()) {
           if (_cancel) {
             _completed = true
