@@ -1,4 +1,4 @@
-let _threads = []
+let _threads = [], _id = 0
 
 export function thread(job) {
   if (typeof job !== "function") {
@@ -11,7 +11,7 @@ export function thread(job) {
       "A thread only acceps a 'generator function' as an argument")
   }
   let thread = {
-    job: job, priority: 0
+    job: job, priority: 0, id: _id++
   }
   _threads.push(thread)
   return {
@@ -22,8 +22,10 @@ export function thread(job) {
 }
 
 export function run_threads() {
-  _threads.reverse()
   _threads.sort((a, b) => {
+    if (a.priority === b.priority) {
+      return b.id - a.id
+    }
     return b.priority - a.priority
   })
   for (let i = _threads.length - 1; i >= 0; i--) {
