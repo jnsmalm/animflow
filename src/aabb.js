@@ -1,3 +1,4 @@
+import { vector } from "./vector"
 import { task } from "./task"
 
 export function aabb(object) {
@@ -33,19 +34,20 @@ export function aabb(object) {
 
   return {
     center: function () {
-      return object.getGlobalPosition()
+      let { x, y } = object.getGlobalPosition()
+      return vector(x, y)
     },
-    handle: function (callback) {
-      _handle_callback = callback
+    handle: function (value) {
+      _handle_callback = value
       return this
     },
     points: function () {
       let bounds = _collider.getBounds()
       return [
-        new PIXI.Point(bounds.left, bounds.top),
-        new PIXI.Point(bounds.right, bounds.bottom),
-        new PIXI.Point(bounds.right, bounds.top),
-        new PIXI.Point(bounds.left, bounds.bottom)
+        vector(bounds.left, bounds.top),
+        vector(bounds.right, bounds.bottom),
+        vector(bounds.right, bounds.top),
+        vector(bounds.left, bounds.bottom)
       ]
     },
     size: function (x, y) {
