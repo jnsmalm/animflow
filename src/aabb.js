@@ -37,6 +37,9 @@ export function aabb(object) {
       let { x, y } = object.getGlobalPosition()
       return vector(x, y)
     },
+    object: function() {
+      return object
+    },
     handle: function (value) {
       _handle_callback = value
       return this
