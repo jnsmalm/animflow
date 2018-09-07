@@ -1,5 +1,6 @@
 import { task } from "./task"
 import { sequence } from "./sequence"
+import { repeat } from "./repeat"
 
 export function key(key) {
   return {
@@ -26,7 +27,26 @@ export function key(key) {
           })
         }
       }
-    }
+    },
+    repeat: (job) => {
+      task(function* () {
+        let rep
+        add_handler(key, "down", () => {
+          rep = repeat(job)
+        })
+        add_handler(key, "up", () => {
+          rep.cancel()
+        })
+      })
+      return {
+        cancel: () => {
+          task(function* () {
+            remove_handler(key, "down")
+            remove_handler(key, "up")
+          })
+        }
+      }
+    },
   }
 }
 
