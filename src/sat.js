@@ -38,8 +38,8 @@ export function sat(collider_a, collider_b) {
   ]
   let overlap = Number.MAX_VALUE
   let mtv = vector()
-  let shape_a = new Shape(collider_a.points())
-  let shape_b = new Shape(collider_b.points())
+  let shape_a = new Shape(collider_a.points)
+  let shape_b = new Shape(collider_b.points)
 
   for (let axis of axes) {
     let p1 = shape_a.project(axis)
@@ -53,7 +53,7 @@ export function sat(collider_a, collider_b) {
     }
   }
 
-  let d = collider_a.center().sub(collider_b.center())
+  let d = collider_a.center.sub(collider_b.center)
   if (d.dot(mtv) < 0) {
     mtv.neg()
   }
