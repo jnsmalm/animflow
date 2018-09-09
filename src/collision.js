@@ -1,48 +1,69 @@
 import { sat } from "./sat"
-import { task } from "./task";
+import { proceed } from "./proceed"
+import { repeat } from "./repeat"
 
-function collider(a) {
-  return {
-    object: a.object(), center: a.center(), points: a.points()
+let _colliders = {}
+
+export function add_collider(collider) {
+  let group = collider.group() || ""
+  if (!_colliders[group]) {
+    _colliders[group] = []
   }
+  _colliders[group].push(collider)
 }
 
-function colliders(array) {
-  if (!Array.isArray(array)) {
-    return [collider(array)]
-  }
-  let colliders = []
-  for (let i = 0; i < array.length; i++) {
-    colliders.push(collider(array[i]))
-  }
-  return colliders
-}
-
-export function collision(group_a, group_b) {
-  let _handle
-
-  task(function* () {
-    let colliders_a = colliders(group_a)
-    let colliders_b = colliders(group_b)
-
-    for (let i = 0; i < colliders_a.length; i++) {
-      for (let j = 0; j < colliders_b.length; j++) {
-        if (colliders_a[i] === colliders_b[i]) {
-          continue;
-        }
-        let mtv = sat(colliders_a[i], colliders_b[j])
-        if (mtv) {
-          let a = colliders_a[i].object
-          let b = colliders_b[i].object
-          _handle(a, b, mtv)
-        }
+export function collision(groups = [{ a: "", b: "" }]) {
+  let _proceed = proceed(() => {
+    repeat(() => {
+      let colliders = get_colliders()
+      for (let g of groups) {
+        detect_collisions(colliders[g.a], colliders[g.b])
       }
-    }
-  })
+    })
+  }).priority(100)
 
   return {
-    handle: (handle_callback) => {
-      _handle = handle_callback
-    } 
+    cancel: () => {
+      _proceed.cancel()
+    }
+  }
+}
+
+function get_colliders() {
+  let result = {}
+  for (let name in _colliders) {
+    result[name] = []
+    for (let c of _colliders[name]) {
+      result[name].push({
+        object: c.object(),
+        center: c.center(),
+        points: c.points(),
+        collision: c.collision
+      })
+    }
+  }
+  return result
+}
+
+function detect_collisions(a, b) {
+  if (!a || !b) {
+    return
+  }
+  for (let i = 0; i < a.length; i++) {
+    for (let j = 0; j < b.length; j++) {
+      if (a[i] === b[j]) {
+        continue
+      }
+      let mtv = sat(a[i], b[j])
+      if (!mtv) {
+        continue
+      }
+      proceed(() => {
+        a[i].collision(b[j].object, mtv)
+      })
+      proceed(() => {
+        b[j].collision(a[i].object, mtv.neg())
+      })
+    }
   }
 }

@@ -1,28 +1,30 @@
 import { vector } from "./vector"
 import { task } from "./task"
+import { add_collider } from "./collision"
 
 export function aabb(object) {
-  let _handle_callback, _sizex, _sizey, _collider, _visible = false
+  let _handle_callback, _sizex, _sizey, _graphics, _visible = false, _group, _collider_aabb
 
   task(function* () {
     create_collider_graphics()
+    add_collider(_collider_aabb)
   })
 
   function create_collider_graphics() {
-    if (_collider) {
-      object.removeChild(_collider)
+    if (_graphics) {
+      object.removeChild(_graphics)
     }
     let bounds = get_bounds_rectangle()
-    _collider = new PIXI.Graphics(true)
-    _collider.visible = _visible
-    _collider.lineStyle(_visible ? 0.0001 : 0, 0xff0000, 0.8)
-    _collider
+    _graphics = new PIXI.Graphics(true)
+    _graphics.visible = _visible
+    _graphics.lineStyle(_visible ? 0.0001 : 0, 0xff0000, 0.8)
+    _graphics
       .moveTo(bounds.left, bounds.top)
       .lineTo(bounds.right, bounds.top)
       .lineTo(bounds.right, bounds.bottom)
       .lineTo(bounds.left, bounds.bottom)
       .lineTo(bounds.left, bounds.top)
-    object.addChild(_collider)
+    object.addChild(_graphics)
   }
 
   function get_bounds_rectangle() {
@@ -32,7 +34,14 @@ export function aabb(object) {
     return object.getLocalBounds()
   }
 
-  return {
+  _collider_aabb = {
+    group: function(value) {
+      if (value !== undefined) {
+        _group = value
+        return this
+      }
+      return _group
+    },
     center: function () {
       let { x, y } = object.getGlobalPosition()
       return vector(x, y)
@@ -45,7 +54,7 @@ export function aabb(object) {
       return this
     },
     points: function () {
-      let bounds = _collider.getBounds()
+      let bounds = _graphics.getBounds()
       return [
         vector(bounds.left, bounds.top),
         vector(bounds.right, bounds.bottom),
@@ -74,4 +83,5 @@ export function aabb(object) {
       }
     }
   }
+  return _collider_aabb
 }

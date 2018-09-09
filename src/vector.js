@@ -16,9 +16,19 @@ class Vector {
     this.y *= value
     return this
   }
+  add(vector) {
+    this.x += vector.x
+    this.y += vector.y
+    return this
+  }
   sub(vector) {
     this.x -= vector.x
     this.y -= vector.y
+    return this
+  }
+  set(x, y) {
+    this.x = x
+    this.y = y
     return this
   }
 }
