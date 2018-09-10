@@ -1,6 +1,6 @@
 # Ville.js
 
-A JavaScript library for creating animations and smaller games. It has been 
+JavaScript library for creating animations and smaller games. It has been 
 designed for being easy to use and simple for getting started.
 
 ## Getting started
