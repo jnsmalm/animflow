@@ -1,55 +1,35 @@
 # Ville.js
 
-Spelramverk för nybörjare som lär sig programmera. Det är utvecklat för att 
-vara enkelt att komma igång och att med ett fåtal lättförstådda funktioner 
-kunna skapa små spel.
+A JavaScript library for creating animations and smaller games. It has been 
+designed for being easy to use and simple for getting started.
 
-## Komma igång
+## Getting started
 
-1. [Ladda ner Node.js](http://nodejs.org) som är ett program som kan exekvera 
-JavaScript kod.
-2. [Ladda ner Ville.js](https://github.com/jnsmalm/villejs/archive/master.zip) 
-genom att klicka på länken eller att använda git: `git clone https://github.com/jnsmalm/villejs.git`.
-3. Öppna terminalen och gå till den katalog där du valt att ladda ner Ville.js 
-och skriv `npm install`.
-4. Skriv sedan `npm run start` som startar programmet och öppnar en webbläsare. 
-Om allting fungerar ska du se en bild på super mario.
-5. Få super mario att hoppa (med mellanslag) genom att öppna filen `spel.js` i 
-en texteditor och ersätt allt innehåll med följande kod:
+1. [Download Node.js](http://nodejs.org) which is a program for executing 
+JavaScript code.
+2. [Download Ville.js](https://github.com/jnsmalm/villejs/archive/master.zip) 
+by clicking the link or by using git: `git clone https://github.com/jnsmalm/villejs.git`.
+Unpack the archive to a folder of your choice.
+3. Open the terminal and browse to the same folder as in step 2 and type 
+`npm install`.
+4. Also type `npm run start` which will start the default program and open your 
+default web browser. If everything works you should see an image of super mario.
+5. Let's change the code! Open the file `game.js` with a texteditor and replace 
+the contents with the following:
 
 ```
-const { spel, bild, knapp, flytta } = VILLE
+const { game, sprite, key, move, ease } = VILLE
 
-spel.ladda()
+game.init()
 
-spel.start = () => {
-  let mario = bild("mario")
-  knapp(" ").ner(() => {
-    flytta(mario).med({y: -100}).tid(0.2)
-    flytta(mario).med({y: +100}).tid(0.2)
+game.load(() => {
+  let mario = sprite("mario")
+  key(" ").down(() => {
+    move(mario).by({ y: -100 }).time(0.2).ease(ease.sine_out)
+    move(mario).by({ y: +100 }).time(0.2).ease(ease.sine_in)
   })
-}
+})
 ```
 
-## Dokumentation
-
-### Flytta
-
-Funktionen `flytta` flyttar på ett objekt från en position till en annan. 
-Exemplet nedan flyttar ett objekt till position x = 100, y = 100 på en sekund.
-```
-flytta(objekt).till({x: 100, y: 100}).tid(1)
-```
-Om du istället vill flytta objektet omedelbart skriver du följande (struntar 
-alltså i att skriva `tid`):
-```
-flytta(objekt).till({x: 100, y: 100})
-```
-För att endast flytta objektet horisontellt kan du skriva:
-```
-flytta(objekt).till({x: 100}).tid(1)
-```
-Om du vill flytta ett objekt med ett relativt värde (istället för ett absolut) använder du `med` istället:
-```
-flytta(objekt).med({x: 100, y: 100}).tid(1)
-```
+If you didn't close the browser window it will refresh automatically and you 
+should be able to make super mario to jump by pressing the space key.
