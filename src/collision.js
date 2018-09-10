@@ -50,7 +50,7 @@ function detect_collisions(a, b) {
     return
   }
   for (let i = 0; i < a.length; i++) {
-    for (let j = 0; j < b.length; j++) {
+    for (let j = (a === b ? i + 1 : 0); j < b.length; j++) {
       if (a[i] === b[j]) {
         continue
       }
