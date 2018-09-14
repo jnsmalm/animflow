@@ -5,44 +5,47 @@ import { repeat } from "./repeat"
 export function key(key) {
   return {
     down: (job) => {
+      let handler
       task(function* () {
-        add_handler(key, "down", job)
+        handler = add_handler(key, "down", job)
       })
       return {
         cancel: () => {
           task(function* () {
-            remove_handler(key, "down")
+            remove_handler(key, "down", handler)
           })
         }
       }
     },
     up: (job) => {
+      let handler
       task(function* () {
-        add_handler(key, "up", job)
+        handler = add_handler(key, "up", job)
       })
       return {
         cancel: () => {
           task(function* () {
-            remove_handler(key, "up")
+            remove_handler(key, "up", handler)
           })
         }
       }
     },
     repeat: (job) => {
+      let down_handler, up_handler
       task(function* () {
         let rep
-        add_handler(key, "down", () => {
+        down_handler = add_handler(key, "down", () => {
           rep = repeat(job)
         })
-        add_handler(key, "up", () => {
+        up_handler = add_handler(key, "up", () => {
           rep.cancel()
         })
       })
       return {
         cancel: () => {
           task(function* () {
-            remove_handler(key, "down")
-            remove_handler(key, "up")
+            remove_handler(key, "down", down_handler)
+            remove_handler(key, "up", up_handler)
           })
         }
       }
@@ -58,20 +61,23 @@ function add_handler(key, type, job) {
   if (!_handlers[type][key]) {
     _handlers[type][key] = []
   }
-  _handlers[type][key].push(() => {
+  let handler = () => {
     if (seq && !seq.completed()) {
       return
     }
     seq = sequence(job)
-  })
+  }
+  _handlers[type][key].push(handler)
+  return handler
 }
 
-function remove_handler(key, type) {
+function remove_handler(key, type, handler) {
   key = key.toLowerCase()
   if (!_handlers[type][key]) {
     return
   }
-  _handlers[type][key].pop()
+  let index = _handlers[type][key].indexOf(handler)
+  _handlers[type][key].splice(index, 1)
 }
 
 document.addEventListener("keydown", (evt) => {
