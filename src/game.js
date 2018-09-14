@@ -2,19 +2,32 @@ import { sequence } from "./sequence"
 
 export let game = {}
 
-game.init = (width = 800, height = 600) => {
+game.init = (config = {}) => {
+  let { width = 800, height = 600, autoscale = true } = config
+
   game.renderer = PIXI.autoDetectRenderer({ width, height })
   game.root = new PIXI.Container()
   document.body.appendChild(game.renderer.view)
+
+  if (autoscale) {
+    window.onresize = () => {
+      game.renderer.resize(window.innerWidth, window.innerHeight)
+      game.root.position.set(window.innerWidth / 2, window.innerHeight / 2)
+      game.root.scale.set(
+        Math.min(window.innerWidth / width, window.innerHeight / height)
+      )
+    }
+    window.onresize()
+  }
 }
 
 game.load = (start) => {
-  fetch("konfig.json").then((res) => {
+  fetch("assets.json").then((res) => {
     return res.json()
-  }).then((config) => {
-    Object.assign(game, config)
-    for (let name in config.bilder) {
-      PIXI.loader.add(name, config.bilder[name].url)
+  }).then((assets) => {
+    Object.assign(game, assets)
+    for (let name in assets) {
+      PIXI.loader.add(name, assets[name].url)
     }
     PIXI.loader.load(() => {
       if (!start) {
@@ -30,18 +43,4 @@ game.render = () => {
     return
   }
   game.renderer.render(game.root)
-}
-
-game.autoscale = () => {
-  let w = game.renderer.width
-  let h = game.renderer.height
-
-  window.onresize = () => {
-    game.renderer.resize(window.innerWidth, window.innerHeight)
-    game.root.position.set(window.innerWidth / 2, window.innerHeight / 2)
-    game.root.scale.set(
-      Math.min(window.innerWidth / w, window.innerHeight / h)
-    )
-  }
-  window.onresize()
 }
