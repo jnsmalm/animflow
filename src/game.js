@@ -27,7 +27,7 @@ game.load = (start) => {
   }).then((assets) => {
     Object.assign(game, assets)
     for (let name in assets) {
-      PIXI.loader.add(name, assets[name].url)
+      PIXI.loader.add(name, assets[name])
     }
     PIXI.loader.load(() => {
       if (!start) {

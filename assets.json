@@ -1,10 +1,4 @@
 {
-  "mario": {
-    "url": "assets/mario.png",
-    "skala": 1
-  },
-  "yoshi": {
-    "url": "assets/yoshi.png",
-    "skala": 1
-  }
+  "mario": "assets/mario.png",
+  "yoshi": "assets/yoshi.png"
 }

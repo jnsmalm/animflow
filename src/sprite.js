@@ -2,9 +2,15 @@ import { game } from "./game"
 import { task } from "./task"
 
 export function sprite(name) {
-  let sprite = new PIXI.Sprite(PIXI.loader.resources[name].texture)
+  let sprite
+  if (!name) {
+    sprite = new PIXI.Sprite()
+  } else if (PIXI.loader.resources[name]) {
+    sprite = new PIXI.Sprite(PIXI.loader.resources[name].texture)
+  } else {
+    sprite = new PIXI.Sprite.fromImage(name)
+  }
   sprite.anchor.set(0.5)
-  sprite.scale.set(game[name].skala)
 
   task(function* () {
     game.root.addChild(sprite)
