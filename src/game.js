@@ -23,7 +23,9 @@ game.init = (config = {}) => {
 
 game.load = (start) => {
   fetch("assets.json").then((res) => {
-    return res.json()
+    if (res.ok) {
+      return res.json()
+    }
   }).then((assets) => {
     Object.assign(game, assets)
     for (let name in assets) {
