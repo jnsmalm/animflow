@@ -25,6 +25,6 @@ default web browser. If everything works you should see an image of super mario.
 
 ### Using just the library
 
-* Download [Ville.js](https://github.com/jnsmalm/villejs-template/blob/master/dist/ville.js)
+* Download [Ville.js](https://github.com/jnsmalm/villejs/blob/master/dist/ville.js)
 * Add to webpage with `<script type="text/javascript" src="ville.js"></script>`
 * Also add PIXI.js (rendering engine used by Ville.js) `<script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/4.7.1/pixi.min.js"></script>`
