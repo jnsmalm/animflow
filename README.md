@@ -1,35 +1,30 @@
 # Ville.js
 
-JavaScript library for creating animations and smaller games. It has been 
-designed for being easy to use and simple for getting started.
+JavaScript library for creating animations and smaller games. It uses a 
+command-based approach where each command waits (by default) for the previous
+command to complete. This makes the flow of the application easy to understand
+and simple to change.
 
 ## Getting started
 
-1. [Download Node.js](http://nodejs.org) which is a program for executing 
-JavaScript code.
-2. [Download Ville.js](https://github.com/jnsmalm/villejs/archive/master.zip) 
-by clicking the link or by using git: `git clone https://github.com/jnsmalm/villejs.git`.
-Unpack the archive to a folder of your choice.
-3. Open the terminal and browse to the same folder as in step 2 and type 
-`npm install`.
-4. Also type `npm run start` which will start the default program and open your 
+There are two methods for getting started: one that contains a starter structure
+ready to go, and one for just for using Ville.js as a library.
+
+### Using a starter structure
+
+This requires that you have [Node.js](http://nodejs.org) already installed on
+your machine.
+
+* Download the starter structure from GitHub:
+  - git: `git clone https://github.com/jnsmalm/villejs-template.git`
+  - zip: [download](https://github.com/jnsmalm/villejs-template/archive/master.zip)
+  and unpack to the folder of your choice.
+* Open the terminal and browse to that same folder and type `npm install`.
+* Also type `npm run start` which will start a local web server and open your
 default web browser. If everything works you should see an image of super mario.
-5. Let's change the code! Open the file `game.js` with a texteditor and replace 
-the contents with the following:
 
-```
-const { game, sprite, key, move, ease } = VILLE
+### Using just the library
 
-game.init()
-
-game.load(() => {
-  let mario = sprite("mario")
-  key(" ").down(() => {
-    move(mario).by({ y: -100 }).time(0.2).ease(ease.sine_out)
-    move(mario).by({ y: +100 }).time(0.2).ease(ease.sine_in)
-  })
-})
-```
-
-If you didn't close the browser window it will refresh automatically and you 
-should be able to make super mario to jump by pressing the space key.
+* Download [Ville.js](https://github.com/jnsmalm/villejs-template/blob/master/dist/ville.js)
+* Add to webpage with `<script type="text/javascript" src="ville.js"></script>`
+* Also add PIXI.js (rendering engine used by Ville.js) `<script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/4.7.1/pixi.min.js"></script>`

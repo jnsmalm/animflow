@@ -3,9 +3,7 @@
   "version": "1.0.0",
   "description": "JavaScript library for creating animations and smaller games",
   "scripts": {
-    "build": "webpack",
-    "watch": "webpack --watch",
-    "start": "browser-sync start --server --watch"
+    "build": "webpack"
   },
   "repository": {
     "type": "git",
@@ -17,8 +15,8 @@
     "url": "https://github.com/jnsmalm/villejs/issues"
   },
   "homepage": "https://github.com/jnsmalm/villejs#readme",
-  "dependencies": {
-    "browser-sync": "^2.24.7",
+  "devDependencies": {
+    "webpack": "^4.19.1",
     "webpack-cli": "^3.1.0"
   }
 }
