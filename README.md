@@ -5,6 +5,23 @@ command-based approach where each command waits (by default) for the previous
 command to complete. This makes the flow of the application easy to understand
 and simple to change.
 
+*A simple example for an application that shows a sprite of mario which rotates
+360 degrees in one second and than waits one second until repeating the sequence.*
+
+```javascript
+const { game, sprite, repeat, rotate, wait } = VILLE
+
+game.init()
+
+game.load(() => {
+  let mario = sprite("assets/mario.png")
+  repeat(() => {
+    rotate(mario).by(360).time(1).ease()
+    wait(1)
+  })
+})
+```
+
 ## Getting started
 
 There are two methods for getting started: one that contains a starter structure
