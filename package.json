@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "description": "JavaScript library for creating animations and smaller games",
   "scripts": {
-    "build": "webpack"
+    "build": "webpack",
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -16,6 +17,7 @@
   },
   "homepage": "https://github.com/jnsmalm/villejs#readme",
   "devDependencies": {
+    "jest": "^23.6.0",
     "webpack": "^4.19.1",
     "webpack-cli": "^3.1.0"
   }

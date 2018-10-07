@@ -1,6 +1,6 @@
 let _old_threads = [], _new_threads = [], _id = 0
 
-export function thread(job) {
+function thread(job) {
   if (typeof job !== "function") {
     throw new TypeError(
       "A thread only acceps a 'generator function' as an argument")
@@ -25,7 +25,7 @@ export function thread(job) {
   }
 }
 
-export function run_threads() {
+function run_threads() {
   if (_new_threads.length > 0) {
     for (let i = 0; i < _new_threads.length; i++) {
       _old_threads.push(_new_threads[i])
@@ -51,3 +51,6 @@ function do_threads(threads) {
     }
   }
 }
+
+module.exports.thread = thread
+module.exports.run_threads = run_threads
