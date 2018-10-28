@@ -1,19 +1,20 @@
 import { game } from "./game"
 import { task } from "./task"
 
-export function sprite(name) {
+export function sprite(name, parent) {
   let sprite
   if (!name) {
     sprite = new PIXI.Sprite()
-  } else if (PIXI.loader.resources[name]) {
-    sprite = new PIXI.Sprite(PIXI.loader.resources[name].texture)
   } else {
-    sprite = new PIXI.Sprite.fromImage(name)
+    sprite = PIXI.Sprite.from(name)
   }
   sprite.anchor.set(0.5)
 
   task(function* () {
-    game.root.addChild(sprite)
+    if (!parent) {
+      parent = game.root
+    }
+    parent.addChild(sprite)
   })
   return sprite
 }
