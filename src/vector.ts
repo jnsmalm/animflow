@@ -1,9 +1,7 @@
-class Vector {
-  constructor(x = 0, y = 0) {
-    this.x = x
-    this.y = y
+export class Vector {
+  constructor(public x = 0, public y = 0) {
   }
-  dot(vector) {
+  dot(vector: Vector) {
     return this.x * vector.x + this.y * vector.y
   }
   neg() {
@@ -11,28 +9,24 @@ class Vector {
     this.y = -this.y
     return this
   }
-  mul(value) {
+  mul(value: number) {
     this.x *= value
     this.y *= value
     return this
   }
-  add(vector) {
+  add(vector: Vector) {
     this.x += vector.x
     this.y += vector.y
     return this
   }
-  sub(vector) {
+  sub(vector: Vector) {
     this.x -= vector.x
     this.y -= vector.y
     return this
   }
-  set(x, y) {
+  set(x: number, y: number) {
     this.x = x
     this.y = y
     return this
   }
-}
-
-export function vector(x, y) {
-  return new Vector(x, y)
 }

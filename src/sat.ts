@@ -1,10 +1,13 @@
-import { vector } from "./vector"
+import { Vector } from "./vector"
+
+export interface SATShape {
+  center: () => Vector
+  points: () => Vector[]
+}
 
 class Shape {
-  constructor(points) {
-    this.points = points
-  }
-  project(axis) {
+  constructor(public points: Vector[]) { }
+  project(axis: Vector) {
     let dot = this.points[0].dot(axis)
     let min = dot
     let max = dot
@@ -18,11 +21,8 @@ class Shape {
 }
 
 class Projection {
-  constructor(min, max) {
-    this.min = min
-    this.max = max
-  }
-  overlap(proj) {
+  constructor(private min: number, private max: number) { }
+  overlap(proj: Projection) {
     if (this.min < proj.min) {
       return proj.min - this.max
     } else {
@@ -31,15 +31,15 @@ class Projection {
   }
 }
 
-export function sat(collider_a, collider_b) {
+export function sat(collider_a: SATShape, collider_b: SATShape) {
   let axes = [
-    vector(0, 1),
-    vector(1, 0)
+    new Vector(0, 1),
+    new Vector(1, 0)
   ]
   let overlap = Number.MAX_VALUE
-  let mtv = vector()
-  let shape_a = new Shape(collider_a.points)
-  let shape_b = new Shape(collider_b.points)
+  let mtv = new Vector()
+  let shape_a = new Shape(collider_a.points())
+  let shape_b = new Shape(collider_b.points())
 
   for (let axis of axes) {
     let p1 = shape_a.project(axis)
@@ -53,7 +53,7 @@ export function sat(collider_a, collider_b) {
     }
   }
 
-  let d = collider_a.center.sub(collider_b.center)
+  let d = collider_a.center().sub(collider_b.center())
   if (d.dot(mtv) < 0) {
     mtv.neg()
   }
