@@ -4,7 +4,7 @@ import { time } from "./time"
 export function wait(seconds = Number.MAX_VALUE) {
   let _cancel = false
 
-  task(function* () {
+  task(function* (): IterableIterator<void> {
     let elapsed_time = 0
     while (elapsed_time < seconds && !_cancel) {
       elapsed_time += time()
@@ -14,7 +14,7 @@ export function wait(seconds = Number.MAX_VALUE) {
 
   return {
     cancel: () => {
-      task(function* () {
+      task(function* (): IterableIterator<void> {
         _cancel = true
       })
     }

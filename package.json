@@ -17,7 +17,11 @@
   },
   "homepage": "https://github.com/jnsmalm/villejs#readme",
   "devDependencies": {
+    "@types/jest": "^23.3.9",
     "jest": "^23.6.0",
+    "ts-jest": "^23.10.4",
+    "ts-loader": "^5.3.0",
+    "typescript": "^3.1.6",
     "webpack": "^4.19.1",
     "webpack-cli": "^3.1.0"
   }
