@@ -1,9 +1,9 @@
-import { Vector } from "./vector"
+import { vector } from "./vector"
 import { task } from "./task"
 import { add_collider } from "./collision"
 
 export function aabb(object: any) {
-  let _handle_callback: (mtv: Vector, object: any) => void
+  let _handle_callback: (mtv: vector, object: any) => void
   let _sizex: number
   let _sizey: number
   let _graphics: PIXI.Graphics
@@ -38,10 +38,10 @@ export function aabb(object: any) {
     points: function () {
       let bounds = _graphics.getBounds()
       return [
-        new Vector(bounds.left, bounds.top),
-        new Vector(bounds.right, bounds.bottom),
-        new Vector(bounds.right, bounds.top),
-        new Vector(bounds.left, bounds.bottom)
+        vector(bounds.left, bounds.top),
+        vector(bounds.right, bounds.bottom),
+        vector(bounds.right, bounds.top),
+        vector(bounds.left, bounds.bottom)
       ]
     },
     group: () => {
@@ -49,12 +49,12 @@ export function aabb(object: any) {
     },
     center: function () {
       let { x, y } = object.getGlobalPosition()
-      return new Vector(x, y)
+      return vector(x, y)
     },
     object: function () {
       return object
     },
-    collision: function (mtv: Vector, object: any) {
+    collision: function (mtv: vector, object: any) {
       if (_handle_callback) {
         _handle_callback(mtv, object)
       }
@@ -71,7 +71,7 @@ export function aabb(object: any) {
       _group = value
       return this
     },
-    handle: function (value: (mtv: Vector, object: any) => void) {
+    handle: function (value: (mtv: vector, object: any) => void) {
       _handle_callback = value
       return this
     },

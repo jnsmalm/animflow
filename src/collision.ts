@@ -1,14 +1,14 @@
 import { sat } from "./sat"
 import { proceed } from "./proceed"
 import { repeat } from "./repeat"
-import { Vector } from "./vector";
+import { vector } from "./vector";
 
 export interface Collider {
   group: () => string
-  collision: (mtv: Vector, object: any) => void
+  collision: (mtv: vector, object: any) => void
   object: () => any
-  center: () => Vector
-  points: () => Vector[]
+  center: () => vector
+  points: () => vector[]
 }
 
 let _colliders: { [group: string]: Collider[] } = {}
@@ -63,7 +63,7 @@ function detect_collisions(a: Collider[], b: Collider[]) {
       if (a[i] === b[j]) {
         continue
       }
-      let mtv = sat(a[i], b[j]) as Vector
+      let mtv = sat(a[i], b[j]) as vector
       if (!mtv) {
         continue
       }
@@ -71,7 +71,7 @@ function detect_collisions(a: Collider[], b: Collider[]) {
         a[i].collision(mtv, b[j].object)
       })
       proceed(() => {
-        b[j].collision(mtv.neg(), a[i].object)
+        b[j].collision(vector.neg(mtv), a[i].object)
       })
     }
   }
