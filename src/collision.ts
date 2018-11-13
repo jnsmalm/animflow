@@ -3,17 +3,19 @@ import { proceed } from "./proceed"
 import { repeat } from "./repeat"
 import { vector } from "./vector";
 
-export interface Collider {
+interface collider {
   group: () => string
+  type: () => string
   collision: (mtv: vector, object: any) => void
   object: () => any
   center: () => vector
   points: () => vector[]
+  radius: () => number
 }
 
-let _colliders: { [group: string]: Collider[] } = {}
+let _colliders: { [group: string]: collider[] } = {}
 
-export function add_collider(collider: Collider) {
+export function add_collider(collider: collider) {
   let group = collider.group() || ""
   if (!_colliders[group]) {
     _colliders[group] = []
@@ -24,9 +26,8 @@ export function add_collider(collider: Collider) {
 export function collision(groups = [{ a: "", b: "" }]) {
   let _proceed = proceed(() => {
     repeat(() => {
-      //let colliders = get_colliders()
       for (let g of groups) {
-        detect_collisions(_colliders[g.a], _colliders[g.b])
+        detect_group_collisions(_colliders[g.a], _colliders[g.b])
       }
     })
   }).priority(100)
@@ -38,23 +39,35 @@ export function collision(groups = [{ a: "", b: "" }]) {
   }
 }
 
-// function get_colliders() {
-//   let result = {}
-//   for (let name in _colliders) {
-//     result[name] = []
-//     for (let c of _colliders[name]) {
-//       result[name].push({
-//         object: c.object(),
-//         center: c.center(),
-//         points: c.points(),
-//         collision: c.collision
-//       })
-//     }
-//   }
-//   return result
-// }
+function aabb_to_aabb(a: collider, b: collider) {
+  let axes = [
+    vector(0, 1),
+    vector(1, 0)
+  ]
+  return sat(a, b, axes) as vector
+}
 
-function detect_collisions(a: Collider[], b: Collider[]) {
+function sphere_to_sphere(a: collider, b: collider) {
+  let axes = [
+    vector.normalize(vector.sub(a.center(), b.center()))
+  ]
+  return sat(a, b, axes)
+}
+
+function detect_collisions(a: collider, b: collider) {
+  if (a.type() === "aabb") {
+    if (b.type() === "aabb") {
+      return aabb_to_aabb(a, b)
+    }
+  }
+  if (a.type() === "sphere") {
+    if (b.type() === "sphere") {
+      return sphere_to_sphere(a, b)
+    }
+  }
+}
+
+function detect_group_collisions(a: collider[], b: collider[]) {
   if (!a || !b) {
     return
   }
@@ -63,7 +76,7 @@ function detect_collisions(a: Collider[], b: Collider[]) {
       if (a[i] === b[j]) {
         continue
       }
-      let mtv = sat(a[i], b[j]) as vector
+      let mtv = detect_collisions(a[i], b[j]) as vector
       if (!mtv) {
         continue
       }

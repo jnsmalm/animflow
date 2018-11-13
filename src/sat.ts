@@ -1,28 +1,30 @@
 import { vector } from "./vector"
 
-export interface SATShape {
+interface shape {
   center: () => vector
   points: () => vector[]
+  radius: () => number
 }
 
-class Shape {
-  constructor(public points: vector[]) { }
-  project(axis: vector) {
-    let dot = vector.dot(this.points[0], axis)
-    let min = dot
-    let max = dot
-    for (let i = 1; i < this.points.length; i++) {
-      dot = vector.dot(this.points[i], axis)
-      min = Math.min(dot, min)
-      max = Math.max(dot, max)
-    }
-    return new Projection(min, max)
+function project_shape(shape: shape, axis: vector) {
+  let points = shape.points()
+  let radius = shape.radius()
+
+  let dot = vector.dot(points[0], axis)
+  let min = dot
+  let max = dot
+  for (let i = 1; i < points.length; i++) {
+    dot = vector.dot(points[i], axis)
+    min = Math.min(dot, min)
+    max = Math.max(dot, max)
   }
+  return new projection(min - radius, max + radius)
 }
 
-class Projection {
+class projection {
   constructor(private min: number, private max: number) { }
-  overlap(proj: Projection) {
+
+  overlap(proj: projection) {
     if (this.min < proj.min) {
       return proj.min - this.max
     } else {
@@ -31,19 +33,13 @@ class Projection {
   }
 }
 
-export function sat(collider_a: SATShape, collider_b: SATShape) {
-  let axes = [
-    vector(0, 1),
-    vector(1, 0)
-  ]
+export function sat(a: shape, b: shape, axes: vector[]) {
   let overlap = Number.MAX_VALUE
   let mtv = vector()
-  let shape_a = new Shape(collider_a.points())
-  let shape_b = new Shape(collider_b.points())
 
   for (let axis of axes) {
-    let p1 = shape_a.project(axis)
-    let p2 = shape_b.project(axis)
+    let p1 = project_shape(a, axis)
+    let p2 = project_shape(b, axis)
     if (p1.overlap(p2) >= 0) {
       return undefined
     }
@@ -53,7 +49,7 @@ export function sat(collider_a: SATShape, collider_b: SATShape) {
     }
   }
 
-  let d = vector.sub(collider_a.center(), collider_b.center())
+  let d = vector.sub(a.center(), b.center())
   if (vector.dot(d, mtv) < 0) {
     mtv = vector.neg(mtv)
   }

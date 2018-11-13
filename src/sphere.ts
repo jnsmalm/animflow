@@ -2,10 +2,9 @@ import { vector } from "./vector"
 import { task } from "./task"
 import { add_collider } from "./collision"
 
-export function aabb(object: PIXI.Container) {
+export function sphere(object: PIXI.Container) {
   let _handle_callback: (mtv: vector, object: any) => void
-  let _sizex: number
-  let _sizey: number
+  let _radius: number
   let _graphics: PIXI.Graphics
   let _visible = false
   let _group = ""
@@ -14,41 +13,28 @@ export function aabb(object: PIXI.Container) {
     if (_graphics) {
       object.removeChild(_graphics)
     }
-    let bounds = get_bounds_rectangle()
+    let radius = _radius
+    if (!radius) {
+      radius = object.getLocalBounds().width / 2
+    }
     _graphics = new PIXI.Graphics(true)
     _graphics.visible = _visible
     _graphics.lineStyle(_visible ? 0.0001 : 0, 0xff0000, 0.8)
-    _graphics
-      .moveTo(bounds.left, bounds.top)
-      .lineTo(bounds.right, bounds.top)
-      .lineTo(bounds.right, bounds.bottom)
-      .lineTo(bounds.left, bounds.bottom)
-      .lineTo(bounds.left, bounds.top)
+    _graphics.drawCircle(0, 0, radius)
     object.addChild(_graphics)
   }
 
-  function get_bounds_rectangle() {
-    if (_sizex && _sizey) {
-      return new PIXI.Rectangle(_sizex / -2, _sizey / -2, _sizex, _sizey)
-    }
-    return object.getLocalBounds()
-  }
-
-  let aabb = {
+  let sphere = {
     points: function () {
-      let bounds = _graphics.getBounds()
       return [
-        vector(bounds.left, bounds.top),
-        vector(bounds.right, bounds.bottom),
-        vector(bounds.right, bounds.top),
-        vector(bounds.left, bounds.bottom)
+        this.center()
       ]
     },
     radius: () => {
-      return 0
+      return _graphics.getBounds().width / 2
     },
     type: () => {
-      return "aabb"
+      return "sphere"
     },
     group: () => {
       return _group
@@ -69,7 +55,7 @@ export function aabb(object: PIXI.Container) {
 
   task(function* (): IterableIterator<void> {
     create_collider_graphics()
-    add_collider(aabb)
+    add_collider(sphere)
   })
 
   return {
@@ -81,9 +67,8 @@ export function aabb(object: PIXI.Container) {
       _handle_callback = value
       return this
     },
-    size: function (x: number, y: number) {
-      _sizex = x
-      _sizey = y
+    size: function (radius: number) {
+      _radius = radius
       task(function* (): IterableIterator<void> {
         create_collider_graphics()
       })
