@@ -31,18 +31,22 @@ export function key(key) {
       }
     },
     repeat: (job) => {
-      let down_handler, up_handler
+      let down_handler, up_handler, _repeat
       task(function* () {
-        let rep
         down_handler = add_handler(key, "down", () => {
-          rep = repeat(job)
+          _repeat = repeat(job)
         })
         up_handler = add_handler(key, "up", () => {
-          rep.cancel()
+          if (_repeat) {
+            _repeat.cancel()
+          }
         })
       })
       return {
         cancel: () => {
+          if (_repeat) {
+            _repeat.cancel()
+          }
           task(function* () {
             remove_handler(key, "down", down_handler)
             remove_handler(key, "up", up_handler)
