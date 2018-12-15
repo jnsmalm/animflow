@@ -5,6 +5,7 @@ translate(VILLE, {
   init: "initiera",
   load: "ladda",
   thread: "tråd",
+  priority: "prioritet",
   sequence: "sekvens",
   completed: "färdig",
   repeat: "upprepa",
