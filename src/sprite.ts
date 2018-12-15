@@ -1,7 +1,7 @@
 import { game } from "./game"
 import { task } from "./task"
 
-export function sprite(name: string, parent: PIXI.Container) {
+export function sprite(name: string, parent?: PIXI.Container) {
   let sprite: PIXI.Sprite
   if (!name) {
     sprite = new PIXI.Sprite()
@@ -12,7 +12,7 @@ export function sprite(name: string, parent: PIXI.Container) {
 
   task(function* (): IterableIterator<void> {
     if (!parent) {
-      parent = (<any>game).root
+      parent = game.stage()
     }
     parent.addChild(sprite)
   })

@@ -4,7 +4,6 @@ translate(VILLE, {
   game: "spel",
   init: "initiera",
   load: "ladda",
-  autoscale: "autoskala",
   thread: "tråd",
   sequence: "sekvens",
   completed: "färdig",
