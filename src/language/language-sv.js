@@ -9,6 +9,7 @@ translate(VILLE, {
   sequence: "sekvens",
   completed: "färdig",
   repeat: "upprepa",
+  times: "antal",
   wait: "vänta",
   parallel: "parallellt",
   proceed: "fortsätt",
@@ -27,6 +28,5 @@ translate(VILLE, {
   show: "visa",
   hide: "dölj",
   sound: "ljud",
-  repeat: "upprepa",
-  stop: "stoppa"
+  repeat: "upprepa"
 })
