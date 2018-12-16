@@ -30,5 +30,12 @@ translate(VILLE, {
   show: "visa",
   hide: "dölj",
   sound: "ljud",
-  repeat: "upprepa"
+  repeat: "upprepa",
+  collision: "kollision",
+  detect: "detektera",
+  aabb: "aabb",
+  sphere: "sfär",
+  group: "grupp",
+  size: "storlek",
+  handle: "hantera"
 })

@@ -1,10 +1,10 @@
 import { sat } from "./sat"
-import { proceed } from "./proceed"
-import { repeat } from "./repeat"
-import { vector } from "./vector";
+import { vector } from "./vector"
+import { aabb } from "./aabb"
+import { sphere } from "./sphere"
+import { task } from "./task"
 
 interface collider {
-  group: () => string
   type: () => string
   collision: (mtv: vector, object: any) => void
   object: () => any
@@ -13,28 +13,130 @@ interface collider {
   radius: () => number
 }
 
-let _colliders: { [group: string]: collider[] } = {}
-
-export function add_collider(collider: collider) {
-  let group = collider.group() || ""
-  if (!_colliders[group]) {
-    _colliders[group] = []
+export function collision() {
+  let _colliders: { [group: string]: collider[] } = {
+    "": []
   }
-  _colliders[group].push(collider)
-}
-
-export function collision(groups = [{ a: "", b: "" }]) {
-  let _proceed = proceed(() => {
-    repeat(() => {
-      for (let g of groups) {
-        detect_group_collisions(_colliders[g.a], _colliders[g.b])
-      }
-    })
-  }).priority(100)
 
   return {
-    cancel: () => {
-      _proceed.cancel()
+    aabb: (object: PIXI.Container) => {
+      let _aabb = aabb(object)
+      let _handle: (mtv: vector, object: any) => void
+      let _group = ""
+
+      let _collider = {
+        type: () => {
+          return "aabb"
+        },
+        collision: (mtv: vector, object: any) => {
+          if (_handle) {
+            _handle(mtv, object)
+          }
+        },
+        object: () => {
+          return object
+        },
+        center: () => {
+          return _aabb.center()
+        },
+        points: () => {
+          return _aabb.points()
+        },
+        radius: () => {
+          return 0
+        }
+      }
+
+      _colliders[_group].push(_collider)
+
+      return {
+        group: function (group: string) {
+          task(function* (): IterableIterator<void> {
+            _colliders[_group].splice(_colliders[_group].indexOf(_collider), 1)
+            _group = group
+            if (!_colliders[_group]) {
+              _colliders[_group] = []
+            }
+            _colliders[_group].push(_collider)
+          })
+          return this
+        },
+        show: function () {
+          _aabb.show()
+          return this
+        },
+        size: function (x: number, y: number) {
+          _aabb.size(x, y)
+          return this
+        },
+        handle: function (handle: (mtv: vector, object: any) => void) {
+          _handle = handle
+          return this
+        }
+      }
+    },
+    sphere: (object: PIXI.Container) => {
+      let _sphere = sphere(object)
+      let _handle: (mtv: vector, object: any) => void
+      let _group = ""
+
+      let _collider = {
+        type: () => {
+          return "sphere"
+        },
+        collision: (mtv: vector, object: any) => {
+          if (_handle) {
+            _handle(mtv, object)
+          }
+        },
+        object: () => {
+          return object
+        },
+        center: () => {
+          return _sphere.center()
+        },
+        points: () => {
+          return _sphere.points()
+        },
+        radius: () => {
+          return _sphere.radius() || 0
+        }
+      }
+
+      _colliders[_group].push(_collider)
+
+      return {
+        group: function (group: string) {
+          task(function* (): IterableIterator<void> {
+            _colliders[_group].splice(_colliders[_group].indexOf(_collider), 1)
+            _group = group
+            if (!_colliders[_group]) {
+              _colliders[_group] = []
+            }
+            _colliders[_group].push(_collider)
+          })
+          return this
+        },
+        show: function () {
+          _sphere.show()
+          return this
+        },
+        size: function (radius: number) {
+          _sphere.size(radius)
+          return this
+        },
+        handle: function (handle: (mtv: vector, object: any) => void) {
+          _handle = handle
+          return this
+        }
+      }
+    },
+    detect: (groups = [{ a: "", b: "" }]) => {
+      task(function* (): IterableIterator<void> {
+        for (let g of groups) {
+          detect_group_collisions(_colliders[g.a], _colliders[g.b])
+        }
+      })
     }
   }
 }
@@ -44,7 +146,7 @@ function aabb_to_aabb(a: collider, b: collider) {
     vector(0, 1),
     vector(1, 0)
   ]
-  return sat(a, b, axes) as vector
+  return sat(a, b, axes)
 }
 
 function sphere_to_sphere(a: collider, b: collider) {
@@ -54,7 +156,7 @@ function sphere_to_sphere(a: collider, b: collider) {
   return sat(a, b, axes)
 }
 
-function detect_collisions(a: collider, b: collider) {
+function detect_collision(a: collider, b: collider) {
   if (a.type() === "aabb") {
     if (b.type() === "aabb") {
       return aabb_to_aabb(a, b)
@@ -76,16 +178,12 @@ function detect_group_collisions(a: collider[], b: collider[]) {
       if (a[i] === b[j]) {
         continue
       }
-      let mtv = detect_collisions(a[i], b[j]) as vector
+      let mtv = detect_collision(a[i], b[j])
       if (!mtv) {
         continue
       }
-      proceed(() => {
-        a[i].collision(mtv, b[j].object)
-      })
-      proceed(() => {
-        b[j].collision(vector.neg(mtv), a[i].object)
-      })
+      a[i].collision(mtv, b[j].object)
+      b[j].collision(vector.neg(mtv), a[i].object)
     }
   }
 }
