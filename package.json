@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "description": "JavaScript library for creating animations and smaller games",
   "scripts": {
-    "build": "webpack"
+    "build": "webpack --env.production",
+    "test": "jest",
+    "start": "webpack --env --watch"
   },
   "repository": {
     "type": "git",
@@ -16,6 +18,14 @@
   },
   "homepage": "https://github.com/jnsmalm/villejs#readme",
   "devDependencies": {
+    "@types/jest": "^23.3.9",
+    "@types/pixi.js": "^4.8.3",
+    "browser-sync": "^2.26.3",
+    "browser-sync-webpack-plugin": "^2.2.2",
+    "jest": "^23.6.0",
+    "ts-jest": "^23.10.4",
+    "ts-loader": "^5.3.0",
+    "typescript": "^3.1.6",
     "webpack": "^4.19.1",
     "webpack-cli": "^3.1.0"
   }

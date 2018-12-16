@@ -1,9 +1,31 @@
 const path = require("path")
+const BrowserSyncPlugin = require("browser-sync-webpack-plugin")
 
-module.exports = [
-  {
-    entry: "./src/index.js",
-    mode: "production",
+module.exports = env => {
+  return [{
+    entry: "./src/index.ts",
+    mode: env.production ? "production" : "development",
+    devtool: env.production ? "" : "inline-source-map",
+    plugins: [
+      new BrowserSyncPlugin({
+        host: "localhost",
+        port: 3000,
+        server: { baseDir: ["."] },
+        watch: true
+      })
+    ],
+    module: {
+      rules: [
+        {
+          test: /\.tsx?$/,
+          use: "ts-loader",
+          exclude: /node_modules/
+        }
+      ]
+    },
+    resolve: {
+      extensions: [".ts", ".js"]
+    },
     output: {
       path: path.resolve(__dirname, "dist"),
       filename: "ville.js",
@@ -14,10 +36,10 @@ module.exports = [
   },
   {
     entry: "./src/language/language-sv.js",
-    mode: "production",
+    mode: env.production ? "production" : "development",
     output: {
       path: path.resolve(__dirname, "dist"),
       filename: "ville.sv.js"
     }
-  }
-]
+  }]
+}

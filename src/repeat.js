@@ -1,8 +1,8 @@
 import { task, get_tasks } from "./task"
 
 export function repeat(job) {
-  let _times = Number.MAX_VALUE
   let _completed = false
+  let _times = Number.MAX_VALUE
   let _cancel = false
 
   task(function* () {
@@ -24,11 +24,6 @@ export function repeat(job) {
     cancel: function () {
       task(function* () {
         _cancel = true
-      })
-    },
-    stop: function () {
-      task(function* () {
-        _stop = true
       })
     },
     completed: function () {

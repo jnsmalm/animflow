@@ -33,15 +33,23 @@ This requires that you have [Node.js](http://nodejs.org) already installed on
 your machine.
 
 * Download the starter structure from GitHub:
-  - git: `git clone https://github.com/jnsmalm/villejs-template.git`
+  - git: `git clone https://github.com/jnsmalm/https://github.com/jnsmalm/villejs-starter-kit.git`
   - zip: [download](https://github.com/jnsmalm/villejs-template/archive/master.zip)
   and unpack to the folder of your choice.
 * Open the terminal and browse to that same folder and type `npm install`.
-* Also type `npm run start` which will start a local web server and open your
+* Also type `npm start` which will start a local web server and open your
 default web browser. If everything works you should see an image of super mario.
 
 ### Using just the library
 
 * Download [Ville.js](https://github.com/jnsmalm/villejs/releases/latest)
-* Add to webpage with `<script type="text/javascript" src="ville.js"></script>`
+* Add to webpage with `<script src="ville.js"></script>`
 * Also add PIXI.js (rendering engine used by Ville.js) `<script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/4.7.1/pixi.min.js"></script>`
+
+## Building
+
+`npm start` will build to `dist` using development settings. It will also start 
+a local webserver at the root for making it easier to test while developing. 
+Create a `index.html` file in root and include the scripts.
+
+`npm build` will build to `dist` using production settings.

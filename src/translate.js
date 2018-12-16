@@ -7,8 +7,9 @@ export function translate(object, language) {
       object[language[key]] = translate(object[key], language)
     }
     if (typeof object[key] === "function") {
+      let func = object[key].bind(object)
       object[language[key]] = function () {
-        let result = object[key](...arguments)
+        let result = func(...arguments)
         if (result) {
           return translate(result, language)
         }

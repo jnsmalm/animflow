@@ -8,9 +8,9 @@ export function time() {
 let _last = 0
 let _elapsed_time = 0
 
-function animation(timestamp) {
-  _elapsed_time = timestamp - _last
-  _last = timestamp
+function animation(time: number) {
+  _elapsed_time = time - _last
+  _last = time
 
   run_threads()
   game.render()
