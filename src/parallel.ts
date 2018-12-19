@@ -1,16 +1,14 @@
 import { thread } from "./thread"
 import { task } from "./task"
 
-export function parallel(job) {
+export function parallel(job: () => void) {
   let _completed = false
   let _cancel = false
 
   let _parallel = function* () {
-    let tasks = task.get_tasks(job)
-    tasks.reverse()
-    for (let i = 0; i < tasks.length; i++) {
-      tasks[i] = tasks[i]()
-    }
+    let tasks = task.get_tasks(job).reverse().map((value) => {
+      return value()
+    })
     while (tasks.length > 0) {
       for (let i = tasks.length - 1; i >= 0; i--) {
         if (_cancel) {
@@ -38,7 +36,7 @@ export function parallel(job) {
 
   return {
     cancel: () => {
-      task(function* () {
+      task(function* (): IterableIterator<void> {
         _cancel = true
       })
     },

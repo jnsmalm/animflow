@@ -2,37 +2,40 @@ import { task } from "./task"
 import { sequence } from "./sequence"
 import { repeat } from "./repeat"
 
-export function key(key) {
+export function key(key: string) {
   return {
-    down: (job) => {
-      let handler
-      task(function* () {
+    down: (job: () => void) => {
+      let handler: () => void
+      task(function* (): IterableIterator<void> {
         handler = add_handler(key, "down", job)
       })
       return {
         cancel: () => {
-          task(function* () {
+          task(function* (): IterableIterator<void> {
             remove_handler(key, "down", handler)
           })
         }
       }
     },
-    up: (job) => {
-      let handler
-      task(function* () {
+    up: (job: () => void) => {
+      let handler: () => void
+      task(function* (): IterableIterator<void> {
         handler = add_handler(key, "up", job)
       })
       return {
         cancel: () => {
-          task(function* () {
+          task(function* (): IterableIterator<void> {
             remove_handler(key, "up", handler)
           })
         }
       }
     },
-    repeat: (job) => {
-      let down_handler, up_handler, _repeat
-      task(function* () {
+    repeat: (job: () => void) => {
+      let down_handler: () => void
+      let up_handler: () => void
+      let _repeat: { cancel: () => void }
+
+      task(function* (): IterableIterator<void> {
         down_handler = add_handler(key, "down", () => {
           _repeat = repeat(job)
         })
@@ -47,7 +50,7 @@ export function key(key) {
           if (_repeat) {
             _repeat.cancel()
           }
-          task(function* () {
+          task(function* (): IterableIterator<void> {
             remove_handler(key, "down", down_handler)
             remove_handler(key, "up", up_handler)
           })
@@ -57,11 +60,11 @@ export function key(key) {
   }
 }
 
-let _handlers = { down: {}, up: {} }
+let _handlers: { [name: string]: any } = { down: {}, up: {} }
 
-function add_handler(key, type, job) {
+function add_handler(key: string, type: string, job: () => void) {
   key = key.toLowerCase()
-  let seq
+  let seq: { completed: () => boolean }
   if (!_handlers[type][key]) {
     _handlers[type][key] = []
   }
@@ -75,7 +78,7 @@ function add_handler(key, type, job) {
   return handler
 }
 
-function remove_handler(key, type, handler) {
+function remove_handler(key: string, type: string, handler: () => void) {
   key = key.toLowerCase()
   if (!_handlers[type][key]) {
     return
