@@ -182,8 +182,8 @@ function detect_group_collisions(a: collider[], b: collider[]) {
       if (!mtv) {
         continue
       }
-      a[i].collision(mtv, b[j].object)
-      b[j].collision(vector.neg(mtv), a[i].object)
+      a[i].collision(mtv, b[j].object())
+      b[j].collision(vector.neg(mtv), a[i].object())
     }
   }
 }
