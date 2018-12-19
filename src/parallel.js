@@ -1,12 +1,12 @@
 import { thread } from "./thread"
-import { task, have_task_manager, get_tasks } from "./task"
+import { task } from "./task"
 
 export function parallel(job) {
   let _completed = false
   let _cancel = false
 
   let _parallel = function* () {
-    let tasks = get_tasks(job)
+    let tasks = task.get_tasks(job)
     tasks.reverse()
     for (let i = 0; i < tasks.length; i++) {
       tasks[i] = tasks[i]()
@@ -26,7 +26,7 @@ export function parallel(job) {
     _completed = true
   }
 
-  if (have_task_manager()) {
+  if (task.have_task_manager()) {
     task(function* () {
       yield* _parallel()
     })

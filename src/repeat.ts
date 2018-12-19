@@ -1,6 +1,6 @@
-import { task, get_tasks } from "./task"
+import { task } from "./task"
 
-export function repeat(job) {
+export function repeat(job: () => void) {
   let _completed = false
   let _times = Number.MAX_VALUE
   let _cancel = false
@@ -11,7 +11,7 @@ export function repeat(job) {
         _completed = true
         return
       }
-      let tasks = get_tasks(job)
+      let tasks = task.get_tasks(job)
       for (let task of tasks) {
         yield* task()
       }
@@ -22,14 +22,14 @@ export function repeat(job) {
 
   return {
     cancel: function () {
-      task(function* () {
+      task(function* (): IterableIterator<void> {
         _cancel = true
       })
     },
     completed: function () {
       return _completed
     },
-    times: function (value) {
+    times: function (value: number) {
       _times = value
     }
   }

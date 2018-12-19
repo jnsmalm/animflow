@@ -1,12 +1,12 @@
 import { thread } from "./thread"
-import { task, have_task_manager, get_tasks } from "./task"
+import { task } from "./task"
 
 export function sequence(job: () => void) {
   let _completed = false
   let _cancel = false
 
   let _sequence = function* () {
-    let tasks = get_tasks(job)
+    let tasks = task.get_tasks(job)
     for (let task of tasks) {
       if (_cancel) {
         _completed = true
@@ -23,7 +23,7 @@ export function sequence(job: () => void) {
     _completed = true
   }
 
-  if (have_task_manager()) {
+  if (task.have_task_manager()) {
     task(function* () {
       yield* _sequence()
     })
