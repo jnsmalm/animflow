@@ -1,7 +1,8 @@
+import { time } from "./time"
 import { sequence } from "./sequence"
+import { thread } from "./thread"
 
-let _renderer: PIXI.WebGLRenderer | PIXI.CanvasRenderer
-let _stage: PIXI.Container
+let _application: PIXI.Application
 
 export let game = {
   load: (start: () => void) => {
@@ -22,34 +23,32 @@ export let game = {
       })
     })
   },
-  render: () => {
-    if (!_renderer) {
-      return
-    }
-    _renderer.render(_stage)
+  application: () => {
+    return _application
+  },
+  stage: () => {
+    return _application.stage
   },
   init: (width = 800, height = 600, autoscale = true) => {
-    _renderer = PIXI.autoDetectRenderer({ width, height })
-    _stage = new PIXI.Container()
+    _application = new PIXI.Application({ width, height })
 
-    document.body.appendChild(_renderer.view)
+    _application.ticker.add(() => {
+      time.elapsed(_application.ticker.elapsedMS / 1000)
+      thread.run_all()
+    })
+
+    document.body.appendChild(_application.view)
 
     if (autoscale) {
       let resize = () => {
-        _renderer.resize(window.innerWidth, window.innerHeight)
-        _stage.position.set(window.innerWidth / 2, window.innerHeight / 2)
-        _stage.scale.set(
+        _application.renderer.resize(window.innerWidth, window.innerHeight)
+        _application.stage.position.set(window.innerWidth / 2, window.innerHeight / 2)
+        _application.stage.scale.set(
           Math.min(window.innerWidth / width, window.innerHeight / height)
         )
       }
       window.onresize = resize
       resize()
     }
-  },
-  stage: () => {
-    return _stage
-  },
-  renderer: () => {
-    return _renderer
   }
 }
