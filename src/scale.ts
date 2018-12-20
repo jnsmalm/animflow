@@ -2,9 +2,9 @@ import { tween } from "./tween"
 import { sequence } from "./sequence"
 import { ease } from "./ease"
 
-export function scale(object) {
-  let _to = {}
-  let _by = {}
+export function scale(object: PIXI.DisplayObject) {
+  let _to: { x?: number, y?: number } = {}
+  let _by: { x?: number, y?: number } = {}
   let _ease = ease.linear
   let _time = 0
 
@@ -23,7 +23,7 @@ export function scale(object) {
   })
 
   return {
-    to: function (value) {
+    to: function (value: number | { x?: number, y?: number }) {
       if (typeof value === "number") {
         _to.x = value
         _to.y = value
@@ -38,7 +38,7 @@ export function scale(object) {
       }
       return this
     },
-    by: function (value) {
+    by: function (value: number | { x?: number, y?: number }) {
       if (typeof value === "number") {
         _by.x = value
         _by.y = value
@@ -57,7 +57,7 @@ export function scale(object) {
       _ease = value
       return this
     },
-    time: function (value) {
+    time: function (value: number) {
       _time = value
       return this
     }

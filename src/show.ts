@@ -1,7 +1,7 @@
 import { tween } from "./tween"
 import { sequence } from "./sequence"
 
-export function show(object) {
+export function show(object: PIXI.DisplayObject) {
   let _time = 0
 
   sequence(() => {
@@ -9,7 +9,7 @@ export function show(object) {
   })
 
   return {
-    time: function (value) {
+    time: function (value: number) {
       _time = value
     }
   }

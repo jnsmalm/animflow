@@ -10,7 +10,7 @@ export function task(task: task) {
   return _registers[_registers.length - 1].add(task)
 }
 
-export function get_tasks(job: () => void) {
+task.get_tasks = (job: () => void) => {
   let tasks: task[] = []
   _registers.push({
     add: (task) => {
@@ -23,6 +23,6 @@ export function get_tasks(job: () => void) {
   return tasks
 }
 
-export function have_task_manager() {
+task.have_task_manager = () => {
   return _registers.length > 0
 }

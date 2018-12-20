@@ -52,4 +52,4 @@ default web browser. If everything works you should see an image of super mario.
 a local webserver at the root for making it easier to test while developing. 
 Create a `index.html` file in root and include the scripts.
 
-`npm build` will build to `dist` using production settings.
+`npm run build` will build to `dist` using production settings.

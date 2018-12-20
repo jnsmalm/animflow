@@ -1,11 +1,11 @@
-import { thread, run_threads } from "../src/thread"
+import { thread } from "../src/thread"
 
 test('single thread', () => {
   let number = 0
   thread(function* (): IterableIterator<void> {
     number = 1
   })
-  run_threads()
+  thread.run_all()
   expect(number).toBe(1)
 })
 
@@ -16,9 +16,9 @@ test('single thread with yield', () => {
     yield
     number = 2
   })
-  run_threads()
+  thread.run_all()
   expect(number).toBe(1)
-  run_threads()
+  thread.run_all()
   expect(number).toBe(2)
 })
 
@@ -30,7 +30,7 @@ test('multiple threads', () => {
   thread(function* (): IterableIterator<void> {
     number++
   })
-  run_threads()
+  thread.run_all()
   expect(number).toBe(2)
 })
 
@@ -45,7 +45,7 @@ test('multiple threads with priority', () => {
   thread(function* (): IterableIterator<void> {
     number = 2
   }).priority(2)
-  run_threads()
+  thread.run_all()
   expect(number).toBe(3)
 })
 
@@ -57,7 +57,7 @@ test('start thread in other thread', () => {
       number = 2
     })
   })
-  run_threads()
+  thread.run_all()
   expect(number).toBe(2)
 })
 
@@ -68,9 +68,9 @@ test('cancel', () => {
     yield
     number = 2
   })
-  run_threads()
+  thread.run_all()
   expect(number).toBe(1)
   t.cancel()
-  run_threads()
+  thread.run_all()
   expect(number).toBe(1)
 })

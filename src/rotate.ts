@@ -4,9 +4,9 @@ import { ease } from "./ease"
 
 const deg_to_rad = (Math.PI * 2) / 360
 
-export function rotate(object) {
-  let _to
-  let _by
+export function rotate(object: PIXI.DisplayObject) {
+  let _to: number | undefined
+  let _by: number | undefined
   let _ease = ease.linear
   let _time = 0
 
@@ -22,11 +22,11 @@ export function rotate(object) {
   })
 
   return {
-    to: function (value) {
+    to: function (value: number) {
       _to = value
       return this
     },
-    by: function (value) {
+    by: function (value: number) {
       _by = value
       return this
     },
@@ -34,7 +34,7 @@ export function rotate(object) {
       _ease = value
       return this
     },
-    time: function (value) {
+    time: function (value: number) {
       _time = value
       return this
     }

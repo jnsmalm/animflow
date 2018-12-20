@@ -2,9 +2,9 @@ import { tween } from "./tween"
 import { sequence } from "./sequence"
 import { ease } from "./ease"
 
-export function move(object) {
-  let _to = {}
-  let _by = {}
+export function move(object: PIXI.DisplayObject) {
+  let _to: { x?: number, y?: number } = {}
+  let _by: { x?: number, y?: number } = {}
   let _ease = ease.linear
   let _time = 0
 
@@ -23,7 +23,7 @@ export function move(object) {
   })
 
   return {
-    to: function (value) {
+    to: function (value: { x?: number, y?: number }) {
       if (value.x !== undefined) {
         _to.x = value.x
       }
@@ -32,7 +32,7 @@ export function move(object) {
       }
       return this
     },
-    by: function (value) {
+    by: function (value: { x?: number, y?: number }) {
       if (value.x !== undefined) {
         _by.x = value.x
       }
@@ -45,7 +45,7 @@ export function move(object) {
       _ease = value
       return this
     },
-    time: function (value) {
+    time: function (value: number) {
       _time = value
       return this
     }

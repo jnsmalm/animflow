@@ -41,7 +41,7 @@ export function thread(job: () => IterableIterator<void>) {
 /**
  * Runs all the threads
  */
-export function run_threads() {
+thread.run_all = function () {
   if (_new_threads.length > 0) {
     for (let i = 0; i < _new_threads.length; i++) {
       _old_threads.push(_new_threads[i])

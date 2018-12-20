@@ -2,9 +2,7 @@ import { time } from "./time"
 import { task } from "./task"
 import { ease } from "./ease"
 
-type DisplayObject = PIXI.DisplayObject & { [name: string]: any }
-
-export function tween(object: DisplayObject) {
+export function tween(object: { [name: string]: any }) {
   let _ease = ease.linear
   let _to: { [name: string]: any } = {}
   let _time = 0
@@ -16,7 +14,7 @@ export function tween(object: DisplayObject) {
     }
     let elapsed_time = 0
     while (elapsed_time < _time && _time > 0) {
-      elapsed_time += time()
+      elapsed_time += time.elapsed()
       let t = Math.min(1, elapsed_time / _time)
       for (let prop in from) {
         object[prop] = lerp(from[prop], _to[prop], t, _ease)

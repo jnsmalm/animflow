@@ -1,21 +1,10 @@
-import { game } from "./game"
-import { run_threads } from "./thread"
+export module time {
+  let _elapsed = 0
 
-export function time() {
-  return _elapsed_time / 1000
+  export function elapsed(elapsed?: number) {
+    if (elapsed !== undefined) {
+      _elapsed = elapsed
+    }
+    return _elapsed
+  }
 }
-
-let _last = 0
-let _elapsed_time = 0
-
-function animation(time: number) {
-  _elapsed_time = time - _last
-  _last = time
-
-  run_threads()
-  game.render()
-
-  requestAnimationFrame(animation)
-}
-
-requestAnimationFrame(animation)
