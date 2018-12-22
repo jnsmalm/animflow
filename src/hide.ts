@@ -1,7 +1,7 @@
 import { tween } from "./tween"
 import { sequence } from "./sequence"
 
-export function hide(object: PIXI.DisplayObject) {
+export function hide(object: { alpha: number }) {
   let _time = 0
 
   sequence(() => {
