@@ -56,3 +56,26 @@ test('have task manager', () => {
     expect(task.have_task_manager()).toBe(true)
   })
 })
+
+test('get task runner', () => {
+  let number = 0
+  let runner = task.get_task_runner(() => {
+    task(function* (): IterableIterator<void> {
+      number++
+      yield
+      number++
+    })
+    task(function* (): IterableIterator<void> {
+      number++
+    })
+  })
+  expect(runner.completed()).toBe(false)
+
+  runner.next()
+  expect(runner.completed()).toBe(false)
+  expect(number).toBe(2)
+
+  runner.next()
+  expect(runner.completed()).toBe(true)
+  expect(number).toBe(3)
+})

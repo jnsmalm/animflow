@@ -23,6 +23,24 @@ task.get_tasks = (job: () => void) => {
   return tasks
 }
 
+task.get_task_runner = (job: () => void) => {
+  let _completed = false
+  let _tasks = task.get_tasks(job).map(value => value())
+  return {
+    next: () => {
+      _completed = true
+      for (let task of _tasks) {
+        if (!task.next().done) {
+          _completed = false
+        }
+      }
+    },
+    completed: () => {
+      return _completed
+    }
+  }
+}
+
 task.have_task_manager = () => {
   return _registers.length > 0
 }
