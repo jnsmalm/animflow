@@ -6,17 +6,24 @@ export function wait(seconds = Number.MAX_VALUE) {
 
   task(function* (): IterableIterator<void> {
     let elapsed_time = 0
-    while (elapsed_time < seconds && !_cancel) {
+    while (!_cancel) {
       elapsed_time += time.elapsed()
+      if (elapsed_time >= seconds) {
+        return
+      }
       yield
     }
   })
 
   return {
     cancel: () => {
-      task(function* (): IterableIterator<void> {
+      if (task.have_task_manager()) {
+        task(function* (): IterableIterator<void> {
+          _cancel = true
+        })
+      } else {
         _cancel = true
-      })
+      }
     }
   }
 }
