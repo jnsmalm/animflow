@@ -22,6 +22,10 @@ export function repeat(job: () => void) {
 
   return {
     cancel: function () {
+      if (!task.have_task_manager()) {
+        _cancel = true
+        return
+      }
       task(function* (): IterableIterator<void> {
         _cancel = true
       })
@@ -31,6 +35,7 @@ export function repeat(job: () => void) {
     },
     times: function (value: number) {
       _times = value
+      return this
     }
   }
 }

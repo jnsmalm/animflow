@@ -1,7 +1,12 @@
 import { thread } from "./thread"
 import { task } from "./task"
 
-export function parallel(job: () => void) {
+export interface parallel {
+  cancel: () => void
+  completed: () => boolean
+}
+
+export function parallel(job: () => void): parallel {
   let _completed = false
   let _cancel = false
 
@@ -18,6 +23,9 @@ export function parallel(job: () => void) {
         if (tasks[i].next().done) {
           tasks.splice(i, 1)
         }
+      }
+      if (tasks.length === 0) {
+        break
       }
       yield
     }
@@ -36,6 +44,10 @@ export function parallel(job: () => void) {
 
   return {
     cancel: () => {
+      if (!task.have_task_manager()) {
+        _cancel = true
+        return
+      }
       task(function* (): IterableIterator<void> {
         _cancel = true
       })
