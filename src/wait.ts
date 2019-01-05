@@ -17,13 +17,13 @@ export function wait(seconds = Number.MAX_VALUE) {
 
   return {
     cancel: () => {
-      if (task.have_task_manager()) {
-        task(function* (): IterableIterator<void> {
-          _cancel = true
-        })
-      } else {
+      if (!task.have_task_manager()) {
         _cancel = true
+        return
       }
+      task(function* (): IterableIterator<void> {
+        _cancel = true
+      })
     }
   }
 }

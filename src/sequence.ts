@@ -1,7 +1,12 @@
 import { thread } from "./thread"
 import { task } from "./task"
 
-export function sequence(job: () => void) {
+export interface sequence {
+  cancel: () => void
+  completed: () => boolean
+}
+
+export function sequence(job: () => void): sequence {
   let _completed = false
   let _cancel = false
 
@@ -35,6 +40,10 @@ export function sequence(job: () => void) {
 
   return {
     cancel: function () {
+      if (!task.have_task_manager()) {
+        _cancel = true
+        return
+      }
       task(function* (): IterableIterator<void> {
         _cancel = true
       })
