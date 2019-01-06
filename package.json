@@ -1,6 +1,6 @@
 {
   "name": "villejs",
-  "version": "1.0.0",
+  "version": "0.7.2",
   "description": "JavaScript library for creating animations and smaller games",
   "scripts": {
     "build": "webpack --env.production",

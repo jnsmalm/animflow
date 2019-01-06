@@ -1,5 +1,7 @@
 const path = require("path")
 const BrowserSyncPlugin = require("browser-sync-webpack-plugin")
+const BannerPlugin = require("webpack").BannerPlugin
+const package = require("./package.json")
 
 module.exports = env => {
   return [{
@@ -12,7 +14,8 @@ module.exports = env => {
         port: 3000,
         server: { baseDir: ["."] },
         watch: true
-      })
+      }),
+      new BannerPlugin("Ville.js v" + package.version)
     ],
     module: {
       rules: [
