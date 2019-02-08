@@ -1,18 +1,22 @@
 import { vector } from "./vector"
 import { task } from "./task"
 
-export function aabb(object: PIXI.Container) {
-  let _sizex: number, _sizey: number
+export function aabb(object?: PIXI.Container) {
+  let _center = vector()
+  let _size = vector()
   let _visible = false
   let _graphics: PIXI.Graphics
 
   function create_collider_graphics() {
+    if (!object) {
+      return
+    }
     if (_graphics) {
       object.removeChild(_graphics)
     }
     let bounds: PIXI.Rectangle
-    if (_sizex && _sizey) {
-      bounds = new PIXI.Rectangle(_sizex / -2, _sizey / -2, _sizex, _sizey)
+    if (_size.x && _size.y) {
+      bounds = new PIXI.Rectangle(_size.x / -2, _size.y / -2, _size.x, _size.y)
     } else {
       bounds = object.getLocalBounds()
     }
@@ -25,7 +29,7 @@ export function aabb(object: PIXI.Container) {
       .lineTo(bounds.right, bounds.bottom)
       .lineTo(bounds.left, bounds.bottom)
       .lineTo(bounds.left, bounds.top)
-      
+
     object.addChild(_graphics)
   }
 
@@ -33,6 +37,14 @@ export function aabb(object: PIXI.Container) {
 
   return {
     points: () => {
+      if (!object) {
+        return [
+          vector(_center.x - _size.x / 2, _center.y - _size.y / 2),
+          vector(_center.x + _size.x / 2, _center.y + _size.y / 2),
+          vector(_center.x + _size.x / 2, _center.y - _size.y / 2),
+          vector(_center.x - _size.x / 2, _center.y + _size.y / 2)
+        ]
+      }
       let bounds = _graphics.getBounds()
       return [
         vector(bounds.left, bounds.top),
@@ -42,8 +54,8 @@ export function aabb(object: PIXI.Container) {
       ]
     },
     size: function (x: number, y: number) {
-      _sizex = x
-      _sizey = y
+      _size.x = x
+      _size.y = y
       task(function* (): IterableIterator<void> {
         create_collider_graphics()
       })
@@ -54,7 +66,13 @@ export function aabb(object: PIXI.Container) {
         create_collider_graphics()
       })
     },
-    center: function () {
+    center: function (center?: vector) {
+      if (center) {
+        _center = vector.copy(center)
+      }
+      if (!object) {
+        return vector(_center.x, _center.y)
+      }
       let { x, y } = object.getGlobalPosition()
       return vector(x, y)
     }

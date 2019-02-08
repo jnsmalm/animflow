@@ -4,6 +4,10 @@ export function vector(x = 0, y = 0) {
   return { x: x, y: y }
 }
 
+vector.copy = (v: vector) => {
+  return vector(v.x, v.y)
+}
+
 vector.add = (a: vector, b: vector) => {
   return vector(a.x + b.x, a.y + b.y)
 }

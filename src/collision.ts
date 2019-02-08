@@ -19,7 +19,7 @@ export function collision() {
   }
 
   return {
-    aabb: (object: PIXI.Container) => {
+    aabb: (object?: PIXI.Container) => {
       let _aabb = aabb(object)
       let _handle: (mtv: vector, object: any) => void
       let _group = ""
@@ -72,10 +72,13 @@ export function collision() {
         handle: function (handle: (mtv: vector, object: any) => void) {
           _handle = handle
           return this
-        }
+        },
+        center: (center?: vector) => {
+          return _aabb.center(center)
+        },
       }
     },
-    sphere: (object: PIXI.Container) => {
+    sphere: (object?: PIXI.Container) => {
       let _sphere = sphere(object)
       let _handle: (mtv: vector, object: any) => void
       let _group = ""
@@ -121,14 +124,17 @@ export function collision() {
           _sphere.show()
           return this
         },
-        size: function (radius: number) {
-          _sphere.size(radius)
+        radius: function (radius: number) {
+          _sphere.radius(radius)
           return this
         },
         handle: function (handle: (mtv: vector, object: any) => void) {
           _handle = handle
           return this
-        }
+        },
+        center: (center?: vector) => {
+          return _sphere.center(center)
+        },
       }
     },
     detect: (groups = [{ a: "", b: "" }]) => {
