@@ -87,18 +87,19 @@ function remove_handler(key: string, type: string, handler: () => void) {
   _handlers[type][key].splice(index, 1)
 }
 
-document.addEventListener("keydown", (evt) => {
-  let key = evt.key.toLowerCase()
-  if (!_handlers.down[key] || _handlers.down[key].length === 0) {
-    return
-  }
-  _handlers.down[key].slice(-1)[0]()
-})
-
-document.addEventListener("keyup", (evt) => {
-  let key = evt.key.toLowerCase()
-  if (!_handlers.up[key] || _handlers.up[key].length === 0) {
-    return
-  }
-  _handlers.up[key].slice(-1)[0]()
-})
+if (typeof document !== "undefined") {
+  document.addEventListener("keydown", (evt) => {
+    let key = evt.key.toLowerCase()
+    if (!_handlers.down[key] || _handlers.down[key].length === 0) {
+      return
+    }
+    _handlers.down[key].slice(-1)[0]()
+  })
+  document.addEventListener("keyup", (evt) => {
+    let key = evt.key.toLowerCase()
+    if (!_handlers.up[key] || _handlers.up[key].length === 0) {
+      return
+    }
+    _handlers.up[key].slice(-1)[0]()
+  })
+}
