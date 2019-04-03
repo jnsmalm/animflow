@@ -2,8 +2,10 @@
   "name": "villejs",
   "version": "0.7.2",
   "description": "JavaScript library for creating animations and smaller games",
+  "main": "dist/src/index.js",
   "scripts": {
     "build": "webpack --env.production",
+    "install": "tsc",
     "test": "jest",
     "start": "webpack --env --watch"
   },
