@@ -2,7 +2,7 @@ import { tween } from "./tween"
 import { sequence } from "./sequence"
 import { ease } from "./ease"
 
-export function move(object: PIXI.DisplayObject) {
+export function move(object: { x: number, y: number }) {
   let _to: { x?: number, y?: number } = {}
   let _by: { x?: number, y?: number } = {}
   let _ease = ease.linear
