@@ -1,5 +1,5 @@
 {
-  "name": "villejs",
+  "name": "animflow",
   "version": "0.7.2",
   "description": "JavaScript library for creating animations and smaller games",
   "main": "dist/src/index.js",
@@ -11,14 +11,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jnsmalm/villejs.git"
+    "url": "git+https://github.com/jnsmalm/animflow.git"
   },
-  "author": "Jens Malmborg",
+  "author": "Jens Malmborg <jnsmalm@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/jnsmalm/villejs/issues"
+    "url": "https://github.com/jnsmalm/animflow/issues"
   },
-  "homepage": "https://github.com/jnsmalm/villejs#readme",
+  "homepage": "https://github.com/jnsmalm/animflow#readme",
   "devDependencies": {
     "@types/jest": "^23.3.9",
     "@types/pixi.js": "^4.8.3",

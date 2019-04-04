@@ -15,7 +15,7 @@ module.exports = env => {
         server: { baseDir: ["."] },
         watch: true
       }),
-      new BannerPlugin("Ville.js v" + package.version)
+      new BannerPlugin("Animflow v" + package.version)
     ],
     module: {
       rules: [
@@ -31,8 +31,8 @@ module.exports = env => {
     },
     output: {
       path: path.resolve(__dirname, "dist"),
-      filename: "ville.js",
-      library: "VILLE",
+      filename: "animflow.js",
+      library: "ANIMFLOW",
       libraryTarget: "umd",
       umdNamedDefine: true
     }
@@ -42,7 +42,7 @@ module.exports = env => {
     mode: env.production ? "production" : "development",
     output: {
       path: path.resolve(__dirname, "dist"),
-      filename: "ville.sv.js"
+      filename: "animflow.sv.js"
     }
   }]
 }

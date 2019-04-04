@@ -1,6 +1,6 @@
 import { translate } from "../translate"
 
-translate(VILLE, {
+translate(ANIMFLOW, {
   game: "spel",
   init: "initiera",
   load: "ladda",

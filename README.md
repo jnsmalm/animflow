@@ -1,4 +1,4 @@
-# Ville.js
+# Animflow
 
 JavaScript library for creating animations and smaller games. It uses a 
 command-based approach where each command waits (by default) for the previous
@@ -9,7 +9,7 @@ and simple to change.
 360 degrees in one second and than waits one second until repeating the sequence.*
 
 ```javascript
-const { game, sprite, repeat, rotate, wait } = VILLE
+const { game, sprite, repeat, rotate, wait } = ANIMFLOW
 
 game.init()
 
@@ -25,7 +25,7 @@ game.load(() => {
 ## Getting started
 
 There are two methods for getting started: one that contains a starter structure
-ready to go, and one for just for using Ville.js as a library.
+ready to go, and one for just for using Animflow.js as a library.
 
 ### Using a starter structure
 
@@ -33,8 +33,8 @@ This requires that you have [Node.js](http://nodejs.org) already installed on
 your machine.
 
 * Download the starter structure from GitHub:
-  - git: `git clone https://github.com/jnsmalm/https://github.com/jnsmalm/villejs-starter-kit.git`
-  - zip: [download](https://github.com/jnsmalm/villejs-template/archive/master.zip)
+  - git: `git clone https://github.com/jnsmalm/animflow-starter-kit.git`
+  - zip: [download](https://github.com/jnsmalm/animflow-template/archive/master.zip)
   and unpack to the folder of your choice.
 * Open the terminal and browse to that same folder and type `npm install`.
 * Also type `npm start` which will start a local web server and open your
@@ -42,9 +42,9 @@ default web browser. If everything works you should see an image of super mario.
 
 ### Using just the library
 
-* Download [Ville.js](https://github.com/jnsmalm/villejs/releases/latest)
-* Add to webpage with `<script src="ville.js"></script>`
-* Also add PIXI.js (rendering engine used by Ville.js) `<script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/4.7.1/pixi.min.js"></script>`
+* Download [Animflow](https://github.com/jnsmalm/animflow/releases/latest)
+* Add to webpage with `<script src="animflow.js"></script>`
+* Also add PIXI.js (rendering engine used by Animflow) `<script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/4.7.1/pixi.min.js"></script>`
 
 ## Building
 
@@ -58,7 +58,7 @@ Create a `index.html` file in root and include the scripts.
 
 ### Overview
 
-Ville.js is built around a command-based API where each command waits (by 
+Animflow is built around a command-based API where each command waits (by 
 default) for the previous command to complete. This makes it really simple to 
 instruct your application to do things that requires multiple animation frames 
 to complete. For example, the code below makes an object move in a shape of a 
