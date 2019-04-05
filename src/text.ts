@@ -9,7 +9,7 @@ export function text(str: string, parent?: PIXI.Container) {
 
   task(function* (): IterableIterator<void> {
     if (!parent) {
-      parent = game.stage()
+      parent = game.app.stage
     }
     parent.addChild(text)
   })

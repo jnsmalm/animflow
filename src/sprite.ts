@@ -12,7 +12,7 @@ export function sprite(name: string, parent?: PIXI.Container) {
 
   task(function* (): IterableIterator<void> {
     if (!parent) {
-      parent = game.stage()
+      parent = game.app.stage
     }
     parent.addChild(sprite)
   })
