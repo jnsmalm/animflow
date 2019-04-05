@@ -5,46 +5,45 @@ command-based approach where each command waits (by default) for the previous
 command to complete. This makes the flow of the application easy to understand
 and simple to change.
 
-*A simple example for an application that shows a sprite of mario which rotates
-360 degrees in one second and than waits one second until repeating the sequence.*
+## Getting started
+
+Start by downloading the latest version of Animflow 
+https://github.com/jnsmalm/animflow/releases/latest and PIXI.js (rendering 
+engine used by Animflow) https://github.com/pixijs/pixi.js/releases/latest.
+
+Create a file `index.html` with the following contents.
+
+```html
+<!doctype html>
+<html lang="en">
+<head>
+  <script src="pixi.js"></script>
+  <script src="animflow.js"></script>
+</head>
+<body>
+  <script src="game.js"></script>
+</body>
+</html>
+```
+
+Create another file `game.js`.
 
 ```javascript
-const { game, sprite, repeat, rotate, wait } = ANIMFLOW
+const { game, sprite, repeat, move, ease, wait } = ANIMFLOW
 
 game.init()
 
 game.load(() => {
   let mario = sprite("assets/mario.png")
   repeat(() => {
-    rotate(mario).by(360).time(1).ease()
+    move(mario).by({ y: -150 }).time(0.2).ease(ease.sine_out)
+    move(mario).by({ y: +150 }).time(0.2).ease(ease.sine_in)
     wait(1)
   })
 })
 ```
 
-## Getting started
-
-There are two methods for getting started: one that contains a starter structure
-ready to go, and one for just for using Animflow.js as a library.
-
-### Using a starter structure
-
-This requires that you have [Node.js](http://nodejs.org) already installed on
-your machine.
-
-* Download the starter structure from GitHub:
-  - git: `git clone https://github.com/jnsmalm/animflow-starter-kit.git`
-  - zip: [download](https://github.com/jnsmalm/animflow-template/archive/master.zip)
-  and unpack to the folder of your choice.
-* Open the terminal and browse to that same folder and type `npm install`.
-* Also type `npm start` which will start a local web server and open your
-default web browser. If everything works you should see an image of super mario.
-
-### Using just the library
-
-* Download [Animflow](https://github.com/jnsmalm/animflow/releases/latest)
-* Add to webpage with `<script src="animflow.js"></script>`
-* Also add PIXI.js (rendering engine used by Animflow) `<script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/4.7.1/pixi.min.js"></script>`
+Open `index.html` with your web browser and you should see mario jumping.
 
 ## Building
 
