@@ -7,9 +7,9 @@ and simple to change.
 
 ## Getting started
 
-Start by downloading the latest version of Animflow 
-https://github.com/jnsmalm/animflow/releases/latest and PIXI.js (rendering 
-engine used by Animflow) https://github.com/pixijs/pixi.js/releases/latest.
+Start by downloading the latest version of [Animflow](https://github.com/jnsmalm/animflow/releases/latest) 
+and [PIXI.js](https://github.com/pixijs/pixi.js/releases/latest) (the rendering 
+engine used by Animflow).
 
 Create a file `index.html` with the following contents.
 
@@ -26,7 +26,8 @@ Create a file `index.html` with the following contents.
 </html>
 ```
 
-Create another file `game.js`.
+Create another file `game.js`. Also download an image of your choice, for example 
+an image of [mario](https://www.google.com/search?q=mario+png&source=lnms&tbm=isch&sa=X&ved=0ahUKEwj0hfvpprvhAhWs5KYKHSk7DXEQ_AUIDigB&biw=1033&bih=540&dpr=2).
 
 ```javascript
 const { game, sprite, repeat, move, ease, wait } = ANIMFLOW
@@ -34,7 +35,7 @@ const { game, sprite, repeat, move, ease, wait } = ANIMFLOW
 game.init()
 
 game.load(() => {
-  let mario = sprite("assets/mario.png")
+  let mario = sprite("mario.png")
   repeat(() => {
     move(mario).by({ y: -150 }).time(0.2).ease(ease.sine_out)
     move(mario).by({ y: +150 }).time(0.2).ease(ease.sine_in)
