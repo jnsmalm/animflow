@@ -46,6 +46,27 @@ game.load(() => {
 
 Open `index.html` with your web browser and you should see mario jumping.
 
+### Install with NPM
+
+If you are using tools such as Webpack or Browserify you may want to install 
+Animflow as a node module. Animflow is not yet available in npm registry but can 
+instead be installed directly from the git repo.
+
+`npm install git+https://git@github.com/jnsmalm/animflow.git --save`
+
+### Starter Kit
+
+This requires that you have [Node.js](http://nodejs.org) already installed on
+your machine.
+
+* Download the Starter Kit from GitHub:
+  - git: `git clone https://github.com/jnsmalm/animflow-starter-kit.git`
+  - zip: [download](https://github.com/jnsmalm/animflow-starter-kit/archive/master.zip)
+  and unpack to the folder of your choice.
+* Open the terminal and browse to that same folder and type `npm install`.
+* Also type `npm start` which will start a local web server and open your
+default web browser. If everything works you should see an image of mario.
+
 ## Building
 
 `npm start` will build to `dist` using development settings. It will also start 
