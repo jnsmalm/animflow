@@ -4,7 +4,7 @@ const BannerPlugin = require("webpack").BannerPlugin
 const package = require("./package.json")
 
 module.exports = env => {
-  return [{
+  return {
     entry: "./src/index.ts",
     mode: env.production ? "production" : "development",
     devtool: env.production ? "" : "inline-source-map",
@@ -36,13 +36,5 @@ module.exports = env => {
       libraryTarget: "umd",
       umdNamedDefine: true
     }
-  },
-  {
-    entry: "./src/language/language-sv.js",
-    mode: env.production ? "production" : "development",
-    output: {
-      path: path.resolve(__dirname, "dist"),
-      filename: "animflow.sv.js"
-    }
-  }]
+  }
 }

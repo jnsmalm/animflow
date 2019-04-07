@@ -11,7 +11,7 @@ deploy:
   api_key:
     secure: QZN4gmvXe63eKZmCT2YOw0wYQdcm2Ke7PE/H2wOwXKsdb3++upzMUwTJ9cEHA5HEkJyKCSZHLCynguaXuXhVQoSUDVhLWDeKm7fA6PwtWVzJSDd908v1/ldwqcAMrLdBwMzr+6M3C38pOQ64qc56GAvKS9SMfzpGW8y9r7maBfsT90XCjgf0m2H79J01u/tcbuT3VzPEZfB42ftM8hV89RcaKFge7Z4SjBlT+J9LrLvcA/YudYYPKRQlePHnsFqrjPzbjOplx9YW0I2xdrmGYgmivSKxw44NLDwFFGtZjaZRxLfbrMHSMIucacBmYl8dEFntdgnFJFNcdn3yo8L8Ox0qZuhZX3Xhav+RVXvOkWW0da4t3aLx7bqao/TJ55x0BD76iAArS9xHl7+SQ6GbYMiCT08PVKJ6j2ydUertOFqFgKRC+6T7utx6Q+BWMBVgdTo/AkjwfRZxW+A9a7aL/ZWbsXlC5m6Q4kkYH2sJe8Gnf7TR7zxANexif1nzm4yPxS45/R0dMmRC8juv66J8FlDTca4W1lkkYO/B4R1JLXRApfnerrNEwB/P2OHw/mivYwb2xITRKE7hXE3XxaSuK79yyvj87KhTY26sD/u4Z9s8ctME62m87Imv3MyX6sWWT07eLjhJLDs8qHgZW72uxfJes5uN/dciu1xiP/YzQTI=
   file_glob: true
-  file: dist/*
+  file: dist/animflow.js
   skip_cleanup: true
   on:
     tags: on
