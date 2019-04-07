@@ -1,6 +1,6 @@
 import * as animflow from "./index"
 
-export function locale(translation: any | string = {}) {
+export function locale(translation: any = {}) {
   if (translation === "sv") {
     translation = require("./locale/locale-sv.json")
   }

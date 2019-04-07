@@ -1,6 +1,6 @@
 {
   "name": "animflow",
-  "version": "0.7.2",
+  "version": "0.8.0",
   "description": "JavaScript library for creating animations and smaller games",
   "main": "dist/index.js",
   "scripts": {
