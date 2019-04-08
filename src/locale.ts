@@ -4,10 +4,10 @@ export function locale(translation: any = {}) {
   if (translation === "sv") {
     translation = require("./locale/locale-sv.json")
   }
-  return lang(animflow, undefined, translation)
+  return translate(animflow, undefined, translation)
 }
 
-function lang(target: any, owner: any, translation: any): any {
+function translate(target: any, owner: any, translation: any): any {
   if (target._lang) {
     return target._lang
   }
@@ -17,7 +17,7 @@ function lang(target: any, owner: any, translation: any): any {
         if (!translation[p]) {
           return target[p]
         }
-        return lang(target[translation[p]], target, translation)
+        return translate(target[translation[p]], target, translation)
       }
     })
     return target._lang
@@ -27,7 +27,7 @@ function lang(target: any, owner: any, translation: any): any {
       apply(target: any, thisArg: any, argArray?: any) {
         let result = target.apply(owner, argArray)
         if (result) {
-          return lang(result, owner, translation)
+          return translate(result, owner, translation)
         }
         return result
       }
