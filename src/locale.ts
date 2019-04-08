@@ -2,7 +2,7 @@ import * as animflow from "./index"
 
 export function locale(translation: any = {}) {
   if (translation === "sv") {
-    translation = require("./locale/locale-sv.json")
+    translation = require("./locale/locale-sv")
   }
   return translate(animflow, undefined, translation)
 }
