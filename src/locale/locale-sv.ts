@@ -1,4 +1,4 @@
-export default {
+module.exports = {
   spel: "game",
   app: "app",
   ladda: "load",
