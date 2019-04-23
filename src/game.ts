@@ -1,6 +1,6 @@
 import { time } from "./time"
 import { sequence } from "./sequence"
-import { thread } from "./thread"
+import { process } from "./process"
 
 export namespace game {
   export let app: PIXI.Application
@@ -29,7 +29,7 @@ export namespace game {
 
     app.ticker.add(() => {
       time.elapsed(app.ticker.elapsedMS / 1000)
-      thread.run_all()
+      process.run_all()
     })
 
     document.body.appendChild(app.view)

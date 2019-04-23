@@ -1,6 +1,6 @@
 import { task } from "../src/task"
 import { parallel } from "../src/parallel";
-import { thread } from "../src/thread";
+import { process } from "../src/process";
 
 test('parallel in task runner', () => {
   let number = 0
@@ -40,7 +40,7 @@ test('parallel in thread', () => {
       yield
     })
   })
-  thread.run_all()
+  process.run_all()
   expect(number).toBe(4)
 })
 

@@ -1,5 +1,5 @@
 export { time } from "./time"
-export { thread } from "./thread"
+export { process } from "./process"
 export { game } from "./game"
 export { sprite } from "./sprite"
 export { text } from "./text"

@@ -1,6 +1,6 @@
 import { task } from "../src/task"
 import { sequence } from "../src/sequence";
-import { thread } from "../src/thread";
+import { process } from "../src/process";
 
 test('sequence in task runner', () => {
   let number = 0
@@ -43,7 +43,7 @@ test('sequence in thread', () => {
     })
   })
   for (let i = 0; i < 3; i++) {
-    thread.run_all()
+    process.run_all()
   }
   expect(number).toBe(4)
 })

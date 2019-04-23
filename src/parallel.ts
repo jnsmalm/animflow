@@ -1,4 +1,4 @@
-import { thread } from "./thread"
+import { process } from "./process"
 import { task } from "./task"
 
 export interface parallel {
@@ -37,7 +37,7 @@ export function parallel(job: () => void): parallel {
       yield* _parallel()
     })
   } else {
-    thread(function* () {
+    process(function* () {
       yield* _parallel()
     })
   }

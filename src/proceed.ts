@@ -1,33 +1,33 @@
 import { task } from "./task"
-import { thread } from "./thread"
+import { process } from "./process"
 
 export function proceed(job: () => void) {
   let _cancel = false
-  let _thread: { cancel: () => void, priority: (value: number) => void }
+  let _process: { cancel: () => void, priority: (value: number) => void }
   let _priority = 0
 
   task(function* (): IterableIterator<void> {
     if (_cancel) {
       return
     }
-    _thread = thread(function* () {
+    _process = process(function* () {
       let tasks = task.get_tasks(job)
       for (let task of tasks) {
         yield* task()
       }
     })
-    _thread.priority(_priority)
+    _process.priority(_priority)
   })
   return {
     cancel: function () {
-      if (_thread) {
-        _thread.cancel()
+      if (_process) {
+        _process.cancel()
       }
       _cancel = true
     },
     priority: function (value: number) {
-      if (_thread) {
-        _thread.priority(value)
+      if (_process) {
+        _process.priority(value)
       }
       _priority = value
       return this

@@ -1,4 +1,4 @@
-import { thread } from "./thread"
+import { process } from "./process"
 import { task } from "./task"
 
 export interface sequence {
@@ -33,7 +33,7 @@ export function sequence(job: () => void): sequence {
       yield* _sequence()
     })
   } else {
-    thread(function* () {
+    process(function* () {
       yield* _sequence()
     })
   }
