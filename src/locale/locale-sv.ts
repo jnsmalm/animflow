@@ -2,7 +2,7 @@ module.exports = {
   spel: "game",
   app: "app",
   ladda: "load",
-  tråd: "thread",
+  process: "process",
   prioritet: "priority",
   uppgift: "task",
   sekvens: "sequence",
